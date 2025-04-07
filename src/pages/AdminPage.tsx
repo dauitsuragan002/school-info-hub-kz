@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Download, Upload } from "lucide-react";
+import { Download, Upload, School, Book, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Table, 
@@ -20,6 +20,7 @@ const AdminPage = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [uploading, setUploading] = useState(false);
   const [tableData, setTableData] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"students" | "teachers" | "schedule">("students");
   const { toast } = useToast();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,8 +32,8 @@ const AdminPage = () => {
   const handleUpload = async () => {
     if (!files || files.length === 0) {
       toast({
-        title: "No files selected",
-        description: "Please select files to upload",
+        title: "Файлдар таңдалмаған",
+        description: "Жүктеу үшін файлдарды таңдаңыз",
         variant: "destructive",
       });
       return;
@@ -45,18 +46,36 @@ const AdminPage = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Simulate some sample data after upload
-      setTableData([
-        { id: 1, name: "Асқар Мұхтар", school: "№5 мектеп", grade: "9-A", subject: "Математика" },
-        { id: 2, name: "Айнұр Серікова", school: "№12 гимназия", grade: "10-Б", subject: "Физика" },
-        { id: 3, name: "Бақыт Нұрланов", school: "№8 лицей", grade: "11-В", subject: "Химия" },
-        { id: 4, name: "Гүлнұр Қалиева", school: "№3 мектеп", grade: "9-Г", subject: "Биология" },
-        { id: 5, name: "Дәулет Жұмағұлов", school: "№7 мектеп", grade: "10-А", subject: "Информатика" }
-      ]);
+      // Simulate some sample data after upload based on the active tab
+      if (activeTab === "students") {
+        setTableData([
+          { id: 1, name: "Асқар Мұхтар", grade: "9-A", birthDate: "2006-05-15", school: "№5 мектеп" },
+          { id: 2, name: "Айнұр Серікова", grade: "10-Б", birthDate: "2005-07-22", school: "№5 мектеп" },
+          { id: 3, name: "Бақыт Нұрланов", grade: "11-В", birthDate: "2004-11-03", school: "№5 мектеп" },
+          { id: 4, name: "Гүлнұр Қалиева", grade: "9-Г", birthDate: "2006-03-19", school: "№5 мектеп" },
+          { id: 5, name: "Дәулет Жұмағұлов", grade: "10-А", birthDate: "2005-09-28", school: "№5 мектеп" }
+        ]);
+      } else if (activeTab === "teachers") {
+        setTableData([
+          { id: 1, name: "Әсел Қасымова", subject: "Математика", birthDate: "1985-04-12", school: "№5 мектеп" },
+          { id: 2, name: "Болат Ахметов", subject: "Физика", birthDate: "1978-08-29", school: "№5 мектеп" },
+          { id: 3, name: "Сәуле Нұрғалиева", subject: "Биология", birthDate: "1982-12-10", school: "№5 мектеп" },
+          { id: 4, name: "Марат Тәжібаев", subject: "Химия", birthDate: "1975-06-05", school: "№5 мектеп" },
+          { id: 5, name: "Жаңыл Бекетова", subject: "Тарих", birthDate: "1988-02-17", school: "№5 мектеп" }
+        ]);
+      } else {
+        setTableData([
+          { id: 1, day: "Дүйсенбі", time: "08:00-08:45", grade: "9-A", subject: "Математика", room: "204", shift: "1" },
+          { id: 2, day: "Дүйсенбі", time: "08:55-09:40", grade: "9-A", subject: "Физика", room: "305", shift: "1" },
+          { id: 3, day: "Дүйсенбі", time: "09:50-10:35", grade: "9-A", subject: "Қазақ тілі", room: "103", shift: "1" },
+          { id: 4, day: "Дүйсенбі", time: "10:45-11:30", grade: "9-A", subject: "Тарих", room: "207", shift: "1" },
+          { id: 5, day: "Дүйсенбі", time: "11:40-12:25", grade: "9-A", subject: "Биология", room: "310", shift: "1" }
+        ]);
+      }
       
       toast({
-        title: "Upload successful",
-        description: `Successfully uploaded ${files.length} file(s)`,
+        title: "Жүктеу сәтті аяқталды",
+        description: `${files.length} файл сәтті жүктелді`,
       });
       
       setFiles(null);
@@ -65,8 +84,8 @@ const AdminPage = () => {
       if (fileInput) fileInput.value = "";
     } catch (error) {
       toast({
-        title: "Upload failed",
-        description: "There was an error uploading your files",
+        title: "Жүктеу сәтсіз аяқталды",
+        description: "Файлдарды жүктеу кезінде қате орын алды",
         variant: "destructive",
       });
     } finally {
@@ -84,24 +103,131 @@ const AdminPage = () => {
     document.body.removeChild(link);
   };
 
+  const renderTableColumns = () => {
+    if (activeTab === "students") {
+      return (
+        <TableRow>
+          <TableHead>ID</TableHead>
+          <TableHead>Аты-жөні</TableHead>
+          <TableHead>Сынып</TableHead>
+          <TableHead>Туған күні</TableHead>
+          <TableHead>Мектеп</TableHead>
+        </TableRow>
+      );
+    } else if (activeTab === "teachers") {
+      return (
+        <TableRow>
+          <TableHead>ID</TableHead>
+          <TableHead>Аты-жөні</TableHead>
+          <TableHead>Пән</TableHead>
+          <TableHead>Туған күні</TableHead>
+          <TableHead>Мектеп</TableHead>
+        </TableRow>
+      );
+    } else {
+      return (
+        <TableRow>
+          <TableHead>ID</TableHead>
+          <TableHead>Күн</TableHead>
+          <TableHead>Уақыт</TableHead>
+          <TableHead>Сынып</TableHead>
+          <TableHead>Пән</TableHead>
+          <TableHead>Кабинет</TableHead>
+          <TableHead>Ауысым</TableHead>
+        </TableRow>
+      );
+    }
+  };
+
+  const renderTableRows = () => {
+    return tableData.map((row) => {
+      if (activeTab === "students") {
+        return (
+          <TableRow key={row.id}>
+            <TableCell>{row.id}</TableCell>
+            <TableCell>{row.name}</TableCell>
+            <TableCell>{row.grade}</TableCell>
+            <TableCell>{row.birthDate}</TableCell>
+            <TableCell>{row.school}</TableCell>
+          </TableRow>
+        );
+      } else if (activeTab === "teachers") {
+        return (
+          <TableRow key={row.id}>
+            <TableCell>{row.id}</TableCell>
+            <TableCell>{row.name}</TableCell>
+            <TableCell>{row.subject}</TableCell>
+            <TableCell>{row.birthDate}</TableCell>
+            <TableCell>{row.school}</TableCell>
+          </TableRow>
+        );
+      } else {
+        return (
+          <TableRow key={row.id}>
+            <TableCell>{row.id}</TableCell>
+            <TableCell>{row.day}</TableCell>
+            <TableCell>{row.time}</TableCell>
+            <TableCell>{row.grade}</TableCell>
+            <TableCell>{row.subject}</TableCell>
+            <TableCell>{row.room}</TableCell>
+            <TableCell>{row.shift}</TableCell>
+          </TableRow>
+        );
+      }
+    });
+  };
+
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
+      <h1 className="text-3xl font-bold mb-6">Мектеп Мәліметтерін Басқару Панелі</h1>
       
       <div className="grid gap-6 md:grid-cols-2 mb-10">
         <Card>
           <CardHeader>
-            <CardTitle>Upload Files</CardTitle>
+            <CardTitle>
+              <div className="flex items-center gap-2">
+                <Upload className="h-5 w-5" />
+                Файлдарды Жүктеу
+              </div>
+            </CardTitle>
             <CardDescription>
-              Upload your data files here. Make sure they follow the correct format.
+              Мектеп мәліметтерін жүктеу үшін Excel файлдарын таңдаңыз
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
+              <div className="flex space-x-4 mb-4">
+                <Button
+                  variant={activeTab === "students" ? "default" : "outline"}
+                  onClick={() => setActiveTab("students")}
+                  className="flex-1"
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  Оқушылар
+                </Button>
+                <Button
+                  variant={activeTab === "teachers" ? "default" : "outline"}
+                  onClick={() => setActiveTab("teachers")}
+                  className="flex-1"
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  Мұғалімдер
+                </Button>
+                <Button
+                  variant={activeTab === "schedule" ? "default" : "outline"}
+                  onClick={() => setActiveTab("schedule")}
+                  className="flex-1"
+                >
+                  <Book className="mr-2 h-4 w-4" />
+                  Сабақ кестесі
+                </Button>
+              </div>
+            
               <Alert>
-                <AlertTitle>File Requirements</AlertTitle>
+                <School className="h-4 w-4" />
+                <AlertTitle>Файл талаптары</AlertTitle>
                 <AlertDescription>
-                  Files must be in Excel format (.xlsx). Maximum size is 10MB.
+                  Файлдар Excel форматында (.xlsx) болуы керек. Максималды өлшемі 10МБ.
                 </AlertDescription>
               </Alert>
               
@@ -115,7 +241,7 @@ const AdminPage = () => {
                 />
                 {files && files.length > 0 && (
                   <p className="text-sm text-muted-foreground">
-                    {files.length} file(s) selected
+                    {files.length} файл таңдалды
                   </p>
                 )}
               </div>
@@ -124,29 +250,35 @@ const AdminPage = () => {
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={downloadTemplate}>
               <Download className="mr-2 h-4 w-4" />
-              Download Template
+              Үлгі Жүктеу
             </Button>
             <Button onClick={handleUpload} disabled={!files || uploading}>
               <Upload className="mr-2 h-4 w-4" />
-              {uploading ? "Uploading..." : "Upload Files"}
+              {uploading ? "Жүктелуде..." : "Файлдарды Жүктеу"}
             </Button>
           </CardFooter>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Upload Instructions</CardTitle>
+            <CardTitle>
+              <div className="flex items-center gap-2">
+                <School className="h-5 w-5" />
+                Жүктеу Нұсқаулығы
+              </div>
+            </CardTitle>
             <CardDescription>
-              Follow these steps to upload your data correctly
+              Мектеп мәліметтерін дұрыс жүктеу үшін осы қадамдарды орындаңыз
             </CardDescription>
           </CardHeader>
           <CardContent>
             <ol className="list-decimal pl-5 space-y-2">
-              <li>Download the template Excel file by clicking the "Download Template" button</li>
-              <li>Fill in your data according to the template format</li>
-              <li>Save your Excel file</li>
-              <li>Select your file using the upload button above</li>
-              <li>Click "Upload Files" to submit your data</li>
+              <li>"Үлгі Жүктеу" батырмасын басу арқылы Excel үлгі файлын жүктеңіз</li>
+              <li>Үлгі форматына сәйкес мәліметтерді толтырыңыз</li>
+              <li>Excel файлын сақтаңыз</li>
+              <li>Жоғарыдағы жүктеу батырмасы арқылы файлды таңдаңыз</li>
+              <li>"Файлдарды Жүктеу" батырмасын басып, мәліметтерді жүктеңіз</li>
+              <li>Жүктелген мәліметтер төмендегі кестеде көрсетіледі</li>
             </ol>
           </CardContent>
         </Card>
@@ -155,35 +287,32 @@ const AdminPage = () => {
       {/* Table section */}
       <Card>
         <CardHeader>
-          <CardTitle>Uploaded Data</CardTitle>
+          <CardTitle>
+            <div className="flex items-center gap-2">
+              <School className="h-5 w-5" />
+              {activeTab === "students" ? "Оқушылар тізімі" : 
+               activeTab === "teachers" ? "Мұғалімдер тізімі" : 
+               "Сабақ кестесі"}
+            </div>
+          </CardTitle>
           <CardDescription>
-            View and manage your uploaded information
+            Жүктелген мәліметтерді көру және басқару
           </CardDescription>
         </CardHeader>
         <CardContent>
           {tableData.length > 0 ? (
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
               <Table>
-                <TableCaption>Жүктелген мәліметтер тізімі</TableCaption>
+                <TableCaption>
+                  {activeTab === "students" ? "Жүктелген оқушылар тізімі" : 
+                   activeTab === "teachers" ? "Жүктелген мұғалімдер тізімі" : 
+                   "Жүктелген сабақ кестесі"}
+                </TableCaption>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Аты-жөні</TableHead>
-                    <TableHead>Мектеп</TableHead>
-                    <TableHead>Сынып</TableHead>
-                    <TableHead>Пән</TableHead>
-                  </TableRow>
+                  {renderTableColumns()}
                 </TableHeader>
                 <TableBody>
-                  {tableData.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>{row.id}</TableCell>
-                      <TableCell>{row.name}</TableCell>
-                      <TableCell>{row.school}</TableCell>
-                      <TableCell>{row.grade}</TableCell>
-                      <TableCell>{row.subject}</TableCell>
-                    </TableRow>
-                  ))}
+                  {renderTableRows()}
                 </TableBody>
               </Table>
             </div>
