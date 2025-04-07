@@ -1,3 +1,4 @@
+
 import { Schedule, Student, Teacher } from '@/models/types';
 
 export const mockScheduleData: Schedule[] = [
@@ -72,5 +73,5 @@ export function getUpcomingBirthdays<T extends { birthdate: string; name: string
   // Return the first 'limit' entries and remove the daysUntil property
   return peopleWithDays
     .slice(0, limit)
-    .map(({ daysUntil, ...person }) => person as T);
+    .map(({ daysUntil, ...person }) => person as unknown as T);
 }
