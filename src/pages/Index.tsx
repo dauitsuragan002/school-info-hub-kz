@@ -3,7 +3,6 @@ import React, { useState, useMemo } from 'react';
 import Layout from '@/components/layout/Layout';
 import ScheduleFilters from '@/components/schedule/ScheduleFilters';
 import ScheduleTable from '@/components/schedule/ScheduleTable';
-import BirthdayList from '@/components/birthdays/BirthdayList';
 import { mockScheduleData, mockStudentsData, mockTeachersData, getUpcomingBirthdays } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -11,8 +10,8 @@ import { MapPin } from 'lucide-react';
 
 const Index = () => {
   // Schedule filters state
-  const [selectedGrade, setSelectedGrade] = useState<string>("");
-  const [selectedShift, setSelectedShift] = useState<string>("");
+  const [selectedGrade, setSelectedGrade] = useState<string>("all");
+  const [selectedShift, setSelectedShift] = useState<string>("all");
   
   // Get unique grades from schedule data
   const availableGrades = useMemo(() => {
@@ -23,8 +22,8 @@ const Index = () => {
   // Filter schedule data based on selected filters
   const filteredScheduleData = useMemo(() => {
     return mockScheduleData.filter(item => {
-      const matchesGrade = !selectedGrade || item.grade === selectedGrade;
-      const matchesShift = !selectedShift || item.shift === selectedShift;
+      const matchesGrade = selectedGrade === "all" || item.grade === selectedGrade;
+      const matchesShift = selectedShift === "all" || item.shift === selectedShift;
       return matchesGrade && matchesShift;
     });
   }, [selectedGrade, selectedShift]);

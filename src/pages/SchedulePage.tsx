@@ -7,8 +7,8 @@ import { mockScheduleData } from '@/data/mockData';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const SchedulePage = () => {
-  const [selectedGrade, setSelectedGrade] = useState<string>("");
-  const [selectedShift, setSelectedShift] = useState<string>("");
+  const [selectedGrade, setSelectedGrade] = useState<string>("all");
+  const [selectedShift, setSelectedShift] = useState<string>("all");
   
   // Get unique grades from schedule data
   const availableGrades = useMemo(() => {
@@ -19,8 +19,8 @@ const SchedulePage = () => {
   // Filter schedule data based on selected filters
   const filteredScheduleData = useMemo(() => {
     return mockScheduleData.filter(item => {
-      const matchesGrade = !selectedGrade || item.grade === selectedGrade;
-      const matchesShift = !selectedShift || item.shift === selectedShift;
+      const matchesGrade = selectedGrade === "all" || item.grade === selectedGrade;
+      const matchesShift = selectedShift === "all" || item.shift === selectedShift;
       return matchesGrade && matchesShift;
     });
   }, [selectedGrade, selectedShift]);

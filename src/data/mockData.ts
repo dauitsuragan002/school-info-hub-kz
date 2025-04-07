@@ -1,64 +1,76 @@
-
-import { Schedule, Student, Teacher } from "../models/types";
+import { Schedule, Student, Teacher } from '@/models/types';
 
 export const mockScheduleData: Schedule[] = [
-  { day: "Дүйсенбі", time: "08:00-08:45", grade: "5", subject: "Математика", room: "203", shift: "1" },
-  { day: "Дүйсенбі", time: "08:55-09:40", grade: "5", subject: "Қазақ тілі", room: "205", shift: "1" },
-  { day: "Дүйсенбі", time: "09:50-10:35", grade: "5", subject: "Ағылшын тілі", room: "302", shift: "1" },
-  { day: "Дүйсенбі", time: "08:00-08:45", grade: "6", subject: "Тарих", room: "104", shift: "1" },
-  { day: "Дүйсенбі", time: "13:00-13:45", grade: "9", subject: "Физика", room: "307", shift: "2" },
-  { day: "Сейсенбі", time: "08:00-08:45", grade: "5", subject: "Дене шынықтыру", room: "Спорт зал", shift: "1" },
-  { day: "Сейсенбі", time: "13:00-13:45", grade: "10", subject: "Химия", room: "215", shift: "2" },
+  { day: 'Дүйсенбі', time: '09:00 - 09:45', grade: '1', subject: 'Математика', room: '101', shift: '1' },
+  { day: 'Дүйсенбі', time: '10:00 - 10:45', grade: '1', subject: 'Қазақ тілі', room: '102', shift: '1' },
+  { day: 'Дүйсенбі', time: '11:00 - 11:45', grade: '2', subject: 'Жаратылыстану', room: '201', shift: '1' },
+  { day: 'Дүйсенбі', time: '12:00 - 12:45', grade: '2', subject: 'Ағылшын тілі', room: '202', shift: '1' },
+  { day: 'Сейсенбі', time: '09:00 - 09:45', grade: '3', subject: 'Информатика', room: '301', shift: '1' },
+  { day: 'Сейсенбі', time: '10:00 - 10:45', grade: '3', subject: 'Музыка', room: '302', shift: '1' },
+  { day: 'Сейсенбі', time: '11:00 - 11:45', grade: '4', subject: 'Дене шынықтыру', room: 'Спортзал', shift: '1' },
+  { day: 'Сейсенбі', time: '12:00 - 12:45', grade: '4', subject: 'Өнер', room: '402', shift: '1' },
+  { day: 'Сәрсенбі', time: '09:00 - 09:45', grade: '1', subject: 'Математика', room: '101', shift: '2' },
+  { day: 'Сәрсенбі', time: '10:00 - 10:45', grade: '1', subject: 'Қазақ тілі', room: '102', shift: '2' },
+  { day: 'Сәрсенбі', time: '11:00 - 11:45', grade: '2', subject: 'Жаратылыстану', room: '201', shift: '2' },
+  { day: 'Сәрсенбі', time: '12:00 - 12:45', grade: '2', subject: 'Ағылшын тілі', room: '202', shift: '2' },
+  { day: 'Бейсенбі', time: '09:00 - 09:45', grade: '3', subject: 'Информатика', room: '301', shift: '2' },
+  { day: 'Бейсенбі', time: '10:00 - 10:45', grade: '3', subject: 'Музыка', room: '302', shift: '2' },
+  { day: 'Бейсенбі', time: '11:00 - 11:45', grade: '4', subject: 'Дене шынықтыру', room: 'Спортзал', shift: '2' },
+  { day: 'Бейсенбі', time: '12:00 - 12:45', grade: '4', subject: 'Өнер', room: '402', shift: '2' },
 ];
 
 export const mockStudentsData: Student[] = [
-  { name: "Амирова Айгүл", grade: "5А", birthdate: "2013-05-15" },
-  { name: "Бекмуратов Арман", grade: "5А", birthdate: "2013-06-22" },
-  { name: "Сагатова Динара", grade: "6Б", birthdate: "2012-04-10" },
-  { name: "Каримов Алишер", grade: "9В", birthdate: "2009-07-18" },
-  { name: "Нурланова Жанель", grade: "10А", birthdate: "2008-08-30" },
-  { name: "Аскаров Еламан", grade: "11Б", birthdate: "2007-03-25" },
+  { name: 'Айдын', grade: '1', birthdate: '2015-05-10' },
+  { name: 'Болат', grade: '2', birthdate: '2014-08-22' },
+  { name: 'Жанар', grade: '3', birthdate: '2013-03-15' },
+  { name: 'Дамир', grade: '4', birthdate: '2012-11-01' },
+  { name: 'Айша', grade: '1', birthdate: '2015-07-18' },
+  { name: 'Ернар', grade: '2', birthdate: '2014-09-25' },
+  { name: 'Камила', grade: '3', birthdate: '2013-04-05' },
+  { name: 'Мадияр', grade: '4', birthdate: '2012-12-20' },
 ];
 
 export const mockTeachersData: Teacher[] = [
-  { name: "Жумабаева Сауле Каримовна", position: "Математика мұғалімі", birthdate: "1975-03-12" },
-  { name: "Ахметов Нурлан Маратұлы", position: "Физика мұғалімі", birthdate: "1980-07-24" },
-  { name: "Тулендиева Гульнара Сериковна", position: "Қазақ тілі мұғалімі", birthdate: "1972-09-05" },
-  { name: "Исабаев Бауыржан Аскарович", position: "Дене шынықтыру мұғалімі", birthdate: "1983-11-18" },
-  { name: "Алиева Назгуль Маратовна", position: "Ағылшын тілі мұғалімі", birthdate: "1978-02-27" },
+  { name: 'Айгүл', position: 'Математика мұғалімі', birthdate: '1980-06-20' },
+  { name: 'Серік', position: 'Қазақ тілі мұғалімі', birthdate: '1975-02-14' },
+  { name: 'Гүлмира', position: 'Ағылшын тілі мұғалімі', birthdate: '1985-10-08' },
+  { name: 'Бақытжан', position: 'Информатика мұғалімі', birthdate: '1978-04-30' },
 ];
 
-// Calculate upcoming birthdays
+// Function to get upcoming birthdays for students or teachers
 export function getUpcomingBirthdays<T extends { birthdate: string; name: string }>(
-  data: T[],
-  count: number = 5
+  people: T[], 
+  limit: number = 5
 ): T[] {
+  // Get current date
   const today = new Date();
   
-  // Clone the data to avoid modifying the original
-  const sortedData = [...data].map(item => {
-    const birthdateObj = new Date(item.birthdate);
-    const thisYearBirthdate = new Date(
+  // Calculate days until birthday for each person
+  const peopleWithDays = people.map(person => {
+    const birthdate = new Date(person.birthdate);
+    const birthdateThisYear = new Date(
       today.getFullYear(),
-      birthdateObj.getMonth(),
-      birthdateObj.getDate()
+      birthdate.getMonth(),
+      birthdate.getDate()
     );
     
-    // If birthday already passed this year, set to next year
-    if (thisYearBirthdate < today) {
-      thisYearBirthdate.setFullYear(today.getFullYear() + 1);
+    // If birthday has already occurred this year, calculate for next year
+    if (birthdateThisYear < today) {
+      birthdateThisYear.setFullYear(today.getFullYear() + 1);
     }
     
-    // Return the original item plus the days until birthday
-    return {
-      ...item,
-      daysUntil: Math.ceil((thisYearBirthdate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-    };
+    const daysUntil = Math.ceil(
+      (birthdateThisYear.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    
+    return { ...person, daysUntil };
   });
   
-  // Sort by days until birthday
-  sortedData.sort((a, b) => a.daysUntil - b.daysUntil);
+  // Sort by closest upcoming birthday
+  peopleWithDays.sort((a, b) => a.daysUntil - b.daysUntil);
   
-  // Return the specified number of upcoming birthdays
-  return sortedData.slice(0, count).map(({ daysUntil, ...rest }) => rest as T);
+  // Return the first 'limit' entries and remove the daysUntil property
+  return peopleWithDays
+    .slice(0, limit)
+    .map(({ daysUntil, ...person }) => person as T);
 }

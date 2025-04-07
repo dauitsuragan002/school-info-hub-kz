@@ -29,7 +29,7 @@ const ScheduleFilters: React.FC<ScheduleFiltersProps> = ({
             <SelectValue placeholder="Сыныбыңызды таңдаңыз" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Барлық сыныптар</SelectItem>
+            <SelectItem value="all">Барлық сыныптар</SelectItem>
             {availableGrades.map((grade) => (
               <SelectItem key={grade} value={grade}>
                 {grade} сынып
@@ -48,7 +48,7 @@ const ScheduleFilters: React.FC<ScheduleFiltersProps> = ({
             <SelectValue placeholder="Ауысымды таңдаңыз" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Барлық ауысымдар</SelectItem>
+            <SelectItem value="all">Барлық ауысымдар</SelectItem>
             <SelectItem value="1">1-ші ауысым</SelectItem>
             <SelectItem value="2">2-ші ауысым</SelectItem>
           </SelectContent>
