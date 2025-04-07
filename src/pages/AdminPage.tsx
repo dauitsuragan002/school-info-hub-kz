@@ -6,10 +6,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Download, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  Table, 
+  TableBody, 
+  TableCaption, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
 
 const AdminPage = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [tableData, setTableData] = useState<any[]>([]);
   const { toast } = useToast();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +44,15 @@ const AdminPage = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Simulate some sample data after upload
+      setTableData([
+        { id: 1, name: "Асқар Мұхтар", school: "№5 мектеп", grade: "9-A", subject: "Математика" },
+        { id: 2, name: "Айнұр Серікова", school: "№12 гимназия", grade: "10-Б", subject: "Физика" },
+        { id: 3, name: "Бақыт Нұрланов", school: "№8 лицей", grade: "11-В", subject: "Химия" },
+        { id: 4, name: "Гүлнұр Қалиева", school: "№3 мектеп", grade: "9-Г", subject: "Биология" },
+        { id: 5, name: "Дәулет Жұмағұлов", school: "№7 мектеп", grade: "10-А", subject: "Информатика" }
+      ]);
       
       toast({
         title: "Upload successful",
@@ -69,7 +88,7 @@ const AdminPage = () => {
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
       
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 mb-10">
         <Card>
           <CardHeader>
             <CardTitle>Upload Files</CardTitle>
@@ -132,6 +151,50 @@ const AdminPage = () => {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Table section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Uploaded Data</CardTitle>
+          <CardDescription>
+            View and manage your uploaded information
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {tableData.length > 0 ? (
+            <div className="rounded-md border">
+              <Table>
+                <TableCaption>Жүктелген мәліметтер тізімі</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Аты-жөні</TableHead>
+                    <TableHead>Мектеп</TableHead>
+                    <TableHead>Сынып</TableHead>
+                    <TableHead>Пән</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tableData.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell>{row.id}</TableCell>
+                      <TableCell>{row.name}</TableCell>
+                      <TableCell>{row.school}</TableCell>
+                      <TableCell>{row.grade}</TableCell>
+                      <TableCell>{row.subject}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <p className="text-muted-foreground mb-2">Деректер әлі жүктелмеген</p>
+              <p className="text-sm text-muted-foreground">Деректерді көру үшін Excel файлын жүктеңіз</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
