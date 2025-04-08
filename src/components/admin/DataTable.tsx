@@ -1,4 +1,3 @@
-
 import { School } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -22,9 +21,9 @@ export const DataTable = ({ activeTab, tableData }: DataTableProps) => {
       return (
         <TableRow>
           <TableHead>ID</TableHead>
+          <TableHead>Туған күні</TableHead>
           <TableHead>Аты-жөні</TableHead>
           <TableHead>Сынып</TableHead>
-          <TableHead>Туған күні</TableHead>
           <TableHead>Мектеп</TableHead>
         </TableRow>
       );
@@ -32,9 +31,9 @@ export const DataTable = ({ activeTab, tableData }: DataTableProps) => {
       return (
         <TableRow>
           <TableHead>ID</TableHead>
+          <TableHead>Туған күні</TableHead>
           <TableHead>Аты-жөні</TableHead>
           <TableHead>Пән</TableHead>
-          <TableHead>Туған күні</TableHead>
           <TableHead>Мектеп</TableHead>
         </TableRow>
       );
@@ -59,9 +58,9 @@ export const DataTable = ({ activeTab, tableData }: DataTableProps) => {
         return (
           <TableRow key={row.id}>
             <TableCell>{row.id}</TableCell>
+            <TableCell>{row.birthDate}</TableCell>
             <TableCell>{row.name}</TableCell>
             <TableCell>{row.grade}</TableCell>
-            <TableCell>{row.birthDate}</TableCell>
             <TableCell>{row.school}</TableCell>
           </TableRow>
         );
@@ -69,9 +68,9 @@ export const DataTable = ({ activeTab, tableData }: DataTableProps) => {
         return (
           <TableRow key={row.id}>
             <TableCell>{row.id}</TableCell>
+            <TableCell>{row.birthDate}</TableCell>
             <TableCell>{row.name}</TableCell>
             <TableCell>{row.subject}</TableCell>
-            <TableCell>{row.birthDate}</TableCell>
             <TableCell>{row.school}</TableCell>
           </TableRow>
         );
