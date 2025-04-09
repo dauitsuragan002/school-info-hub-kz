@@ -83,7 +83,7 @@ const SchoolInfoPage = () => {
         setIsLoading(true);
         const cachedData = await readScheduleFromExcel();
         
-        console.log("Жүктелген деректер:", cachedData.length);
+        // console.log("Жүктелген деректер:", cachedData.length);
         
         if (cachedData.length > 0) {
           setScheduleData(cachedData);
@@ -91,11 +91,11 @@ const SchoolInfoPage = () => {
           
           // Күндерді тексеру (диагностика үшін)
           const days = [...new Set(cachedData.map(item => item.day))];
-          console.log("Қолжетімді күндер:", days);
+          // console.log("Қолжетімді күндер:", days);
           
           // Сыныптарды тексеру (диагностика үшін)
           const grades = [...new Set(cachedData.map(item => item.grade))];
-          console.log("Қолжетімді сыныптар:", grades);
+          // console.log("Қолжетімді сыныптар:", grades);
           
           // Егер URL-да параметрлер болса, сол бойынша фильтрлерді орнату
           if (location.search) {
@@ -113,12 +113,12 @@ const SchoolInfoPage = () => {
             if (days.includes('дүйсенбі') || days.includes('понедельник')) {
               const mondayKey = days.find(d => d.toLowerCase() === 'дүйсенбі' || d.toLowerCase() === 'понедельник');
               if (mondayKey) {
-                console.log("Дүйсенбі күні орнатылды:", mondayKey);
+                // console.log("Дүйсенбі күні орнатылды:", mondayKey);
                 setDayFilter(mondayKey);
               }
             } else if (days.length > 0) {
               // Егер дүйсенбі жоқ болса, бірінші күнді алу
-              console.log("Бірінші күн орнатылды:", days[0]);
+              // console.log("Бірінші күн орнатылды:", days[0]);
               setDayFilter(days[0]);
             }
             
@@ -127,18 +127,18 @@ const SchoolInfoPage = () => {
             if (grade5.length > 0) {
               if (grade5.length === 1) {
                 // Тек бір 5-сынып
-                console.log("5-сынып орнатылды:", grade5[0]);
+                // console.log("5-сынып орнатылды:", grade5[0]);
                 setGradeFilter(grade5[0]);
               } else {
                 // Бірнеше 5-сынып
-                console.log("Барлық 5-сынып орнатылды");
+                // console.log("Барлық 5-сынып орнатылды");
                 setGradeFilter("grade_5");
               }
             } else if (grades.length > 0) {
               // 5-сынып жоқ болса, бірінші сыныпты алу
               const firstGradeNum = grades[0].match(/\d+/)?.[0];
               if (firstGradeNum) {
-                console.log("Бірінші сынып орнатылды:", `grade_${firstGradeNum}`);
+                // console.log("Бірінші сынып орнатылды:", `grade_${firstGradeNum}`);
                 setGradeFilter(`grade_${firstGradeNum}`);
               } else {
                 setGradeFilter(grades[0]);
@@ -162,16 +162,16 @@ const SchoolInfoPage = () => {
   // Filtering logic
   const filteredSchedule = useMemo(() => {
     if (!scheduleData || scheduleData.length === 0) {
-      console.log("Сүзуге деректер жоқ");
+      // console.log("Сүзуге деректер жоқ");
       return [];
     }
 
-    console.log("Сүзгі алдында деректер саны:", scheduleData.length);
-    console.log("Қолданылатын сүзгілер:", {
-      gradeFilter,
-      shiftFilter,
-      dayFilter
-    });
+    // console.log("Сүзгі алдында деректер саны:", scheduleData.length);
+    // console.log("Қолданылатын сүзгілер:", {
+    //   gradeFilter,
+    //   shiftFilter,
+    //   dayFilter
+    // });
 
     const filtered = scheduleData.filter((item) => {
       // Сынып сүзгісін тексеру
@@ -228,40 +228,40 @@ const SchoolInfoPage = () => {
       return matchesGrade && matchesShift && matchesDay;
     });
     
-    console.log("Сүзгіден өткен сабақ саны:", filtered.length, {
-      gradeFilter,
-      dayFilter,
-      shiftFilter
-    });
+    // console.log("Сүзгіден өткен сабақ саны:", filtered.length, {
+    //   gradeFilter,
+    //   dayFilter,
+    //   shiftFilter
+    // });
 
     // Ауысымдарды жеке тексеру
     if (shiftFilter !== "all") {
       if (shiftFilter === "II") {
         // II ауысымдағы уақыттарды тексеру
         const times = [...new Set(filtered.map(item => item.time))].sort();
-        console.log("II ауысым сабақтарының уақыттары:", times);
+        // console.log("II ауысым сабақтарының уақыттары:", times);
         
         if (filtered.length > 0) {
-          console.log("II ауысымның сабақтары:", filtered.length);
+          // console.log("II ауысымның сабақтары:", filtered.length);
         } else {
-          console.warn("II ауысымда (14:00+) сабақтар табылмады");
+          // console.warn("II ауысымда (14:00+) сабақтар табылмады");
         }
       } else if (shiftFilter === "I") {
         // I ауысымдағы уақыттарды тексеру
         const times = [...new Set(filtered.map(item => item.time))].sort();
-        console.log("I ауысым сабақтарының уақыттары:", times);
+        // console.log("I ауысым сабақтарының уақыттары:", times);
         
         if (filtered.length > 0) {
-          console.log("I ауысымның сабақтары:", filtered.length);
+          // console.log("I ауысымның сабақтары:", filtered.length);
         } else {
-          console.warn("I ауысымда (14:00-ге дейін) сабақтар табылмады");
+          // console.warn("I ауысымда (14:00-ге дейін) сабақтар табылмады");
         }
       } else {
         const shiftsInFiltered = [...new Set(filtered.map(item => item.shift))];
-        console.log("Сүзгіден кейінгі ауысымдар:", shiftsInFiltered);
+        // console.log("Сүзгіден кейінгі ауысымдар:", shiftsInFiltered);
         
         if (shiftsInFiltered.length === 0) {
-          console.warn(`"${shiftFilter}" ауысымына сәйкес сабақтар табылмады!`);
+          // console.warn(`"${shiftFilter}" ауысымына сәйкес сабақтар табылмады!`);
         }
       }
     }

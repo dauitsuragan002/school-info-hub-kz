@@ -20,27 +20,27 @@ const dayButtons = [
 ];
 
 export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "all", gradeFilter = "all" }: ScheduleTableProps) => {
-  console.log("ScheduleTable компоненті басталды, фильтрлер:", { shiftFilter, dayFilter, dataLength: scheduleData.length });
+  // console.log("ScheduleTable компоненті басталды, фильтрлер:", { shiftFilter, dayFilter, dataLength: scheduleData.length });
 
   // Ауысымдарды тексеру
   useEffect(() => {
-    console.log("Деректердегі ауысымдар:", [...new Set(scheduleData.map(item => item.shift))]);
+    // console.log("Деректердегі ауысымдар:", [...new Set(scheduleData.map(item => item.shift))]);
     
     // II ауысым сабақтарының уақыттарын тексеру
     const shift2Lessons = scheduleData.filter(item => item.shift === "II");
     if (shift2Lessons.length > 0) {
       const times = [...new Set(shift2Lessons.map(item => item.time))].sort();
-      console.log("II ауысым сабақтарының уақыттары:", times);
+      // console.log("II ауысым сабақтарының уақыттары:", times);
       
       const firstLessonTime = times[0]?.split('-')[0]?.trim();
-      console.log("II ауысымның бірінші сабағының уақыты:", firstLessonTime);
+      // console.log("II ауысымның бірінші сабағының уақыты:", firstLessonTime);
     }
   }, [scheduleData]);
 
   // Дұрыс ауысым деректерін таңдау (әрқашан ауысымға байланысты қатаң сүзгі)
   const filteredByShift = useMemo(() => {
     // Артық сүзуді болдырмау, деректер тікелей сүзілген түрде келеді
-    console.log("Сүзілген деректер саны:", scheduleData.length);
+    // console.log("Сүзілген деректер саны:", scheduleData.length);
     return scheduleData;
   }, [scheduleData]);
   
@@ -249,125 +249,9 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
     );
   }
   
-  console.log("ScheduleTable компоненті: деректер саны", filteredByShift.length);
-  console.log("Бірегей күндер:", [...new Set(filteredByShift.map(item => item.day))]);
+  // console.log("ScheduleTable компоненті: деректер саны", filteredByShift.length);
+  // console.log("Бірегей күндер:", [...new Set(filteredByShift.map(item => item.day))]);
 
-  // Сабақ нөмірін алу функциясы
-  const getLessonNumber = (time: string, shift: string = "I"): number => {
-    const timeStart = time.split('-')[0].trim();
-    const hour = parseInt(timeStart.split(':')[0] || "0");
-    const minute = parseInt(timeStart.split(':')[1] || "0");
-    
-    // Егер нақты 8:00-8:45 болса, 1-ші сабақ
-    if ((timeStart === "8:00" || timeStart === "08:00") || 
-       (time === "8:00-8:45" || time === "08:00-08:45")) {
-      console.log("Бірінші сабақ анықталды:", time);
-      return 1;
-    }
-    
-    // Егер нақты 8:50-9:35 болса, 2-ші сабақ
-    if ((timeStart === "8:50" || timeStart === "08:50") || 
-       (time === "8:50-9:35" || time === "08:50-09:35")) {
-      console.log("Екінші сабақ анықталды:", time);
-      return 2;
-    }
-    
-    // II ауысым үшін (14:00-ден басталады)
-    if (hour >= 14) {
-      // II ауысым үшін арнайы уақыт кестесі
-      if (hour === 14 && minute >= 0 && minute <= 45) return 1;  // 14:00-14:45 - 1-ші сабақ
-      if ((hour === 14 && minute >= 50) || (hour === 15 && minute <= 35)) return 2;  // 14:50-15:35 - 2-ші сабақ
-      if ((hour === 15 && minute >= 45) || (hour === 16 && minute <= 30)) return 3;  // 15:45-16:30 - 3-ші сабақ
-      if ((hour === 16 && minute >= 40) || (hour === 17 && minute <= 25)) return 4;  // 16:40-17:25 - 4-ші сабақ
-      if ((hour === 17 && minute >= 30) || (hour === 18 && minute <= 15)) return 5;  // 17:30-18:15 - 5-ші сабақ
-      if ((hour === 18 && minute >= 20) || (hour === 19 && minute <= 5)) return 6;   // 18:20-19:05 - 6-шы сабақ
-      if ((hour === 19 && minute >= 10) || (hour === 19 && minute <= 55)) return 7;  // 19:10-19:55 - 7-ші сабақ
-    }
-    
-    // Нақты сабақ уақыттары
-    const exactTimings = [
-      { start: { hour: 8, minute: 0 }, end: { hour: 8, minute: 45 }, num: 1 },
-      { start: { hour: 8, minute: 50 }, end: { hour: 9, minute: 35 }, num: 2 },
-      { start: { hour: 9, minute: 45 }, end: { hour: 10, minute: 30 }, num: 3 },
-      { start: { hour: 10, minute: 40 }, end: { hour: 11, minute: 25 }, num: 4 },
-      { start: { hour: 11, minute: 30 }, end: { hour: 12, minute: 15 }, num: 5 },
-      { start: { hour: 12, minute: 20 }, end: { hour: 13, minute: 5 }, num: 6 },
-      { start: { hour: 13, minute: 10 }, end: { hour: 13, minute: 55 }, num: 7 },
-      { start: { hour: 14, minute: 0 }, end: { hour: 14, minute: 45 }, num: 1 }, // II ауысым 1-ші сабақ
-      { start: { hour: 14, minute: 50 }, end: { hour: 15, minute: 35 }, num: 2 }, // II ауысым 2-ші сабақ
-      { start: { hour: 15, minute: 45 }, end: { hour: 16, minute: 30 }, num: 3 }, // II ауысым 3-ші сабақ
-      { start: { hour: 16, minute: 40 }, end: { hour: 17, minute: 25 }, num: 4 }, // II ауысым 4-ші сабақ
-      { start: { hour: 17, minute: 30 }, end: { hour: 18, minute: 15 }, num: 5 }, // II ауысым 5-ші сабақ
-      { start: { hour: 18, minute: 20 }, end: { hour: 19, minute: 5 }, num: 6 },  // II ауысым 6-шы сабақ 
-      { start: { hour: 19, minute: 10 }, end: { hour: 19, minute: 55 }, num: 7 }  // II ауысым 7-ші сабақ
-    ];
-    
-    // Жіберілген уақытты нақты уақыттармен салыстыру
-    for (const timing of exactTimings) {
-      // Нақты сәйкестік
-      if (hour === timing.start.hour && minute === timing.start.minute) {
-        return timing.num;
-      }
-      
-      // Уақыт аралығында болса да сабақ нөмірін қайтару
-      const timeInRange = 
-        (hour > timing.start.hour || (hour === timing.start.hour && minute >= timing.start.minute)) && 
-        (hour < timing.end.hour || (hour === timing.end.hour && minute <= timing.end.minute));
-      
-      if (timeInRange) {
-        return timing.num;
-      }
-    }
-    
-    // Бірінші ауысым нақты уақыттар бойынша
-    if (shift === "I") {
-      if (hour === 8 && minute >= 0 && minute <= 45) return 1;   // 8:00-8:45 - 1-ші сабақ
-      if ((hour === 8 && minute >= 50) || (hour === 9 && minute <= 35)) return 2;   // 8:50-9:35 - 2-ші сабақ
-      if ((hour === 9 && minute >= 45) || (hour === 10 && minute <= 30)) return 3;  // 9:45-10:30 - 3-ші сабақ
-      if ((hour === 10 && minute >= 40) || (hour === 11 && minute <= 25)) return 4; // 10:40-11:25 - 4-ші сабақ
-      if ((hour === 11 && minute >= 30) || (hour === 12 && minute <= 15)) return 5; // 11:30-12:15 - 5-ші сабақ
-      if ((hour === 12 && minute >= 20) || (hour === 13 && minute <= 5)) return 6;  // 12:20-13:05 - 6-шы сабақ
-      if ((hour === 13 && minute >= 10) || (hour === 13 && minute <= 55)) return 7; // 13:10-13:55 - 7-ші сабақ
-      if ((hour === 14 && minute >= 0) || (hour === 14 && minute <= 45)) return 8;  // 14:00-14:45 - 8-ші сабақ
-    }
-    
-    // Екінші ауысым нақты уақыттар бойынша
-    if (shift === "II") {
-      if (hour === 8 && minute >= 0 && minute <= 45) return 1;   // 8:00-8:45 - 1-ші сабақ
-      if ((hour === 8 && minute >= 50) || (hour === 9 && minute <= 35)) return 2;   // 8:50-9:35 - 2-ші сабақ
-      if ((hour === 9 && minute >= 45) || (hour === 10 && minute <= 30)) return 3;  // 9:45-10:30 - 3-ші сабақ
-      if ((hour === 10 && minute >= 40) || (hour === 11 && minute <= 25)) return 4; // 10:40-11:25 - 4-ші сабақ
-      if ((hour === 11 && minute >= 30) || (hour === 12 && minute <= 15)) return 5; // 11:30-12:15 - 5-ші сабақ
-      if ((hour === 12 && minute >= 20) || (hour === 13 && minute <= 5)) return 6;  // 12:20-13:05 - 6-шы сабақ
-      if ((hour === 13 && minute >= 10) || (hour === 13 && minute <= 55)) return 7; // 13:10-13:55 - 7-ші сабақ
-      if ((hour === 14 && minute >= 0) || (hour === 14 && minute <= 45)) return 8;  // 14:00-14:45 - 8-ші сабақ
-    }
-    
-    // Таңның немесе түстің басына қарап, болжамдық сабақ нөмірін беру
-    if (hour === 8 && minute === 0) {
-      return 1; // Егер нақты 8:00 болса, міндетті түрде 1-ші сабақ
-    }
-    
-    // Жалпы болжау (уақыт бойынша)
-    if (hour < 9) {
-      return 1; // 9-дан кіші сағат (8:xx) үшін бірінші сабақ
-    } else if (hour === 9 && minute < 40) {
-      return 2; // 9:40-қа дейін екінші сабақ
-    } else if (hour === 9 || (hour === 10 && minute < 35)) {
-      return 3; // 10:35-ке дейін үшінші сабақ
-    } else if (hour === 10 || (hour === 11 && minute < 25)) {
-      return 4; // 11:25-ке дейін төртінші сабақ
-    } else if (hour === 11 || (hour === 12 && minute < 20)) {
-      return 5; // 12:20-ға дейін бесінші сабақ
-    } else if (hour === 12 || (hour === 13 && minute < 10)) {
-      return 6; // 13:10-ға дейін алтыншы сабақ
-    } else if (hour === 13) {
-      return 7; // 13:xx үшін жетінші сабақ
-    } else {
-      return 8; // 14:xx және одан кейін сегізінші сабақ
-    }
-  };
-  
   // Егер тек бір сынып таңдалған болса (толық кесте көрсету)
   const isOneGradeSelected = organizedData.uniqueGrades.length === 1;
   
@@ -375,8 +259,8 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
     const grade = organizedData.uniqueGrades[0];
     const gradeData = organizedData.byGradeAndDay[grade];
     
-    console.log("Бір сынып таңдалды:", grade);
-    console.log("Сыныптың күндері:", Object.keys(gradeData || {}));
+    // console.log("Бір сынып таңдалды:", grade);
+    // console.log("Сыныптың күндері:", Object.keys(gradeData || {}));
     
     return (
       <div className="text-sm">
@@ -420,7 +304,7 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
                           {dayLessons.map((item, index) => (
                             <TableRow key={`${day}_${index}`} className="hover:bg-muted/20">
                               <TableCell className="border border-gray-300"></TableCell>
-                              <TableCell className="text-center font-bold border border-gray-300">{getLessonNumber(item.time, item.shift)}</TableCell>
+                              <TableCell className="text-center font-bold border border-gray-300">{item.lessonNumber}</TableCell>
                               <TableCell className="border border-gray-300">{item.time}</TableCell>
                               <TableCell className="font-medium border border-gray-300">{item.subject}</TableCell>
                               <TableCell className="border border-gray-300 text-center">{item.room}</TableCell>
@@ -453,10 +337,10 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
   // Күн таңдалғанын тексеру
   const isDaySelected = dayFilter !== "all" && organizedData.uniqueDays.some(d => d.toLowerCase() === dayFilter.toLowerCase());
   
-  console.log("Күн таңдалды:", isDaySelected, {
-    uniqueDays: organizedData.uniqueDays,
-    dayFilter
-  });
+  // console.log("Күн таңдалды:", isDaySelected, {
+  //   uniqueDays: organizedData.uniqueDays,
+  //   dayFilter
+  // });
                        
   const isGradeNumberSelected = filteredByShift.length > 0 && filteredByShift.every(item => {
     // Сынып нөмірін тексеру
@@ -478,7 +362,7 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
       ? [shiftFilter] 
       : organizedData.uniqueShifts;
     
-    console.log("Көрсетілетін ауысымдар:", shiftsToShow);
+    // console.log("Көрсетілетін ауысымдар:", shiftsToShow);
     
     return (
       <div className="by-day-view">
@@ -491,7 +375,7 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
             ? [shiftFilter] 
             : organizedData.uniqueShifts;
           
-          console.log("Көрсетілетін ауысымдар:", shiftsToShow);
+          // console.log("Көрсетілетін ауысымдар:", shiftsToShow);
           
           return (
             <div key={day} className="text-sm">
@@ -530,11 +414,11 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
                 );
                 
                 if (lessonsInShift.length === 0) {
-                  console.log(`${shift} ауысымында сабақтар жоқ`);
+                  // console.log(`${shift} ауысымында сабақтар жоқ`);
                   return null;
                 }
                 
-                console.log(`${shift} ауысымында ${lessonsInShift.length} сабақ бар`);
+                // console.log(`${shift} ауысымында ${lessonsInShift.length} сабақ бар`);
                 
                 return (
                   <div key={shift} className="mb-6">
@@ -628,7 +512,7 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
                                         })
                                         .map(time => (
                                           <TableRow key={time} className="hover:bg-muted/20">
-                                            <TableCell className="text-center font-bold border border-gray-300">{getLessonNumber(time, shift)}</TableCell>
+                                            <TableCell className="text-center font-bold border border-gray-300">{lessonsForGroup.find(l => l.time === time)?.lessonNumber || '-'}</TableCell>
                                             <TableCell className="text-xs border border-gray-300">{time}</TableCell>
                                             {gradesInGroup.sort((a, b) => {
                                               // Сынып нөмірі бойынша сұрыптау
@@ -735,7 +619,7 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
                                               <TableBody>
                                                 {uniqueTimes.map(time => (
                                                   <TableRow key={time} className="hover:bg-muted/20">
-                                                    <TableCell className="text-center font-bold border border-gray-300">{getLessonNumber(time, shift)}</TableCell>
+                                                    <TableCell className="text-center font-bold border border-gray-300">{lessonsForGradeNum.find(l => l.time === time)?.lessonNumber || '-'}</TableCell>
                                                     <TableCell className="text-xs border border-gray-300">{time}</TableCell>
                                                     {gradesWithNum.map(grade => {
                                                       const lesson = lessonsForGradeNum.find(
@@ -785,11 +669,11 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
       'бейсенбі': 'БС',
       'жұма': 'ЖМ',
       // Орыс тіліндегі күндер үшін де қысқартулар
-      'понедельник': 'ДС',
-      'вторник': 'СС',
+      'понедельник': 'ПН',
+      'вторник': 'ВТ',        
       'среда': 'СР',
-      'четверг': 'БС',
-      'пятница': 'ЖМ'
+      'четверг': 'ЧТ',
+      'пятница': 'ПТ'
     };
     return dayMap[fullDay.toLowerCase()] || fullDay;
   };
@@ -816,7 +700,7 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
           {filteredByShift.map((item) => (
             <TableRow key={item.id} className="hover:bg-muted/20">
               <TableCell className="border border-gray-300">{getShortDayName(item.day)}</TableCell>
-              <TableCell className="text-center font-bold border border-gray-300">{getLessonNumber(item.time, item.shift)}</TableCell>
+              <TableCell className="text-center font-bold border border-gray-300">{item.lessonNumber}</TableCell>
               <TableCell className="border border-gray-300">{item.time}</TableCell>
               <TableCell className="border border-gray-300">{item.grade}</TableCell>
               <TableCell className="font-medium border border-gray-300">{item.subject}</TableCell>
