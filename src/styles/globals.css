@@ -1,0 +1,216 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 221.2 83% 53.3%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 221.2 83% 53.3%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83% 53.3%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html, body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Мобильді құрылғыларға қосымша стильдер */
+  @media (max-width: 640px) {
+    html {
+      font-size: 15px; /* Mobile үшін шрифт өлшемін азайту */
+    }
+    
+    h1 {
+      font-size: 1.75rem !important;
+    }
+    
+    h2 {
+      font-size: 1.5rem !important;
+    }
+    
+    .container {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
+  
+  /* Файл жүктеу түймешікті жақсарту */
+  input[type="file"] {
+    @apply cursor-pointer text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 
+           file:rounded-md file:border-0 file:text-sm file:font-semibold
+           file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-all;
+  }
+  
+  /* Кіші экрандарға арналған контейнерді реттеу */
+  .container {
+    @apply px-4 sm:px-6 md:px-8 mx-auto max-w-7xl;
+  }
+
+  /* Түймелер стилі */
+  button, .btn {
+    @apply transition-all shadow-sm hover:shadow-md active:scale-95 duration-150;
+  }
+
+  /* Карточкалар стилі */
+  .card {
+    @apply bg-white shadow-sm hover:shadow-md transition-all border border-border/50 rounded-xl;
+  }
+}
+
+/* Қосымша компоненттер үшін стильдер */
+@layer components {
+  /* Мобильді меню */
+  .mobile-menu {
+    @apply fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0;
+  }
+  
+  .mobile-menu-content {
+    @apply fixed inset-y-0 right-0 z-50 h-full w-3/4 border-l bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-slide-out-to-right data-[state=open]:animate-slide-in-from-right;
+  }
+  
+  /* Әкімшілік панель */
+  .admin-panel {
+    @apply bg-white rounded-xl shadow-lg p-6 space-y-6;
+  }
+  
+  /* Таб стильдері */
+  .admin-tabs {
+    @apply bg-gray-50 p-1 rounded-lg;
+  }
+  
+  .admin-tab {
+    @apply px-6 py-3 rounded-md font-medium text-sm transition-all;
+  }
+  
+  .admin-tab-active {
+    @apply bg-white shadow-md text-primary;
+  }
+  
+  /* Кестелер үшін мобильді стильдер */
+  .responsive-table {
+    @apply w-full overflow-x-auto rounded-lg;
+  }
+  
+  .responsive-table table {
+    @apply min-w-full table-auto;
+  }
+  
+  /* Мәзір элементтері */
+  .menu-item {
+    @apply flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors;
+  }
+  
+  /* Жүктеу карточкасы */
+  .upload-card {
+    @apply bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 shadow-sm;
+  }
+  
+  /* Бэйдж стильдері */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  
+  .badge-success {
+    @apply bg-green-100 text-green-700;
+  }
+  
+  .badge-error {
+    @apply bg-red-100 text-red-700;
+  }
+  
+  .badge-info {
+    @apply bg-blue-100 text-blue-700;
+  }
+  
+  /* Мобильді кестелер */
+  @media (max-width: 640px) {
+    .responsive-table tbody tr {
+      @apply flex flex-col border-b py-2;
+    }
+    
+    .responsive-table tbody td {
+      @apply border-none pb-1 pt-1 text-left;
+    }
+    
+    .responsive-table thead {
+      @apply hidden;
+    }
+    
+    .responsive-table tbody td::before {
+      content: attr(data-label);
+      @apply font-medium text-gray-500 inline-block w-1/3;
+    }
+  }
+  
+  /* Жақсартылған бөлім тақырыптары */
+  .section-title {
+    @apply text-2xl font-bold text-gray-800 mb-6 flex items-center;
+  }
+  
+  .section-title:before {
+    content: "";
+    @apply block w-1.5 h-6 bg-primary rounded-full mr-2;
+  }
+} 

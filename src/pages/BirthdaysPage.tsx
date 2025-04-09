@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Gift, School, ArrowLeft, Filter } from "lucide-react";
+import { Gift, ArrowLeft, Filter } from "lucide-react";
 import { BirthdaySection } from "@/components/school/BirthdaySection";
 import { getStudents, getTeachers, StudentItem, TeacherItem } from "@/services/scheduleService";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -62,6 +62,15 @@ const BirthdaysPage = () => {
 
   return (
     <div className="container mx-auto py-10 px-4">
+      <div className="mb-4">
+        <Button variant="outline" asChild>
+          <Link to="/">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Басты бетке оралу
+          </Link>
+        </Button>
+      </div>
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2 mb-2">
@@ -71,20 +80,6 @@ const BirthdaysPage = () => {
           <p className="text-muted-foreground">
             Оқушылар мен мұғалімдердің туған күндері
           </p>
-        </div>
-        <div className="flex gap-4">
-          <Button variant="outline" asChild>
-            <Link to="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Басты бетке оралу
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link to="/map">
-              <School className="h-4 w-4 mr-2" />
-              Мектеп картасы
-            </Link>
-          </Button>
         </div>
       </div>
 

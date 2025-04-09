@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { SchoolFilters } from "@/components/school/SchoolFilters";
 import { ScheduleTable } from "@/components/school/ScheduleTable";
-import { School, Map, Gift } from "lucide-react";
+import { School, Map, Gift, User } from "lucide-react";
 import { readScheduleFromExcel, ScheduleItem } from "@/services/scheduleService";
 
 const SchoolInfoPage = () => {
@@ -271,31 +271,7 @@ const SchoolInfoPage = () => {
 
   return (
     <div className="container mx-auto py-6 px-4">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 mb-1">
-            <School className="h-6 w-6" />
-            Мектеп Кестесі
-          </h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/map">
-              <Map className="h-4 w-4 mr-1" />
-              Карта
-            </Link>
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/birthdays">
-              <Gift className="h-4 w-4 mr-1" />
-              Туған күндер
-            </Link>
-          </Button>
-          <Button variant="secondary" size="sm" asChild>
-            <Link to="/admin">Әкімшілік</Link>
-          </Button>
-        </div>
-      </div>
+      {/* Removed the duplicate navigation header that was here */}
 
       {/* Filters */}
       {!isLoading && !error && scheduleData.length > 0 && (

@@ -407,250 +407,260 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
               </div>
               
               {shiftsToShow.map(shift => {
-                // Тек осы ауысымдағы сабақтар
                 const lessonsInShift = filteredByShift.filter(item => 
                   item.shift === shift && 
                   item.day.toLowerCase() === day.toLowerCase()
                 );
                 
                 if (lessonsInShift.length === 0) {
-                  // console.log(`${shift} ауысымында сабақтар жоқ`);
+                  // // console.log(`${shift} ауысымында сабақтар жоқ`);
                   return null;
                 }
                 
-                // console.log(`${shift} ауысымында ${lessonsInShift.length} сабақ бар`);
+                // // console.log(`${shift} ауысымында ${lessonsInShift.length} сабақ бар`);
                 
                 return (
-                  <div key={shift} className="mb-6">
-                    {/* Ауысым тақырыбын көрсетпейміз, ол бейдж формасында жоғарыда көрсетілді */}
-                    
-                    {/* Сынып топтары бойынша көрсету */}
-                    {Object.keys(organizedData.gradeGroups).map(groupName => {
-                      const gradesInGroup = organizedData.gradeGroups[groupName];
-                      // Осы топтағы сыныптар үшін сабақтар
-                      const lessonsForGroup = lessonsInShift.filter(item => gradesInGroup.includes(item.grade));
-                      
-                      if (lessonsForGroup.length === 0) return null;
-                      
-                      return (
-                        <div key={groupName} className="mb-4">
-                          {/* Топ тақырыбын тек ол таңдалмаған кезде көрсетеміз */}
-                          {/* Топ тақырыбын алып тастаймыз, себебі бейджде көрсетілген */}
-                          
-                          {/* Кесте */}
-                          <Card className="mb-4 shadow-sm hover:shadow-md transition-shadow">
-                            <CardContent className="p-3">
-                              {groupName === "Орыс сыныптары" || groupName === "Лицей сыныптары" ? (
-                                <div className="overflow-x-auto">
-                                  <Table className="border-collapse border border-gray-300 w-full">
-                                    <TableHeader>
-                                      <TableRow className="bg-muted/30">
-                                        <TableHead rowSpan={2} className="w-[30px] border border-gray-300 text-center">№</TableHead>
-                                        <TableHead rowSpan={2} className="w-[80px] border border-gray-300">Уақыт</TableHead>
-                                        {gradesInGroup.sort((a, b) => {
-                                          // Сынып нөмірі бойынша сұрыптау
-                                          const numA = parseInt(a.match(/\d+/)?.[0] || "0");
-                                          const numB = parseInt(b.match(/\d+/)?.[0] || "0");
-                                          if (numA !== numB) return numA - numB;
-                                          return a.localeCompare(b);
-                                        }).map(grade => (
-                                          <TableHead 
-                                            key={grade}
-                                            colSpan={2}
-                                            className="w-[160px] hover:bg-accent hover:text-accent-foreground transition-colors border border-gray-300 text-center"
-                                            onClick={() => window.location.href = `?grade=${grade}&day=${day}`}
-                                            style={{ cursor: 'pointer' }}
-                                          >
-                                            <Button variant="ghost" size="sm" className="p-0 m-0 h-auto font-normal">
-                                              {grade}
-                                            </Button>
-                                          </TableHead>
-                                        ))}
-                                      </TableRow>
-                                      <TableRow className="bg-muted/30">
-                                        {gradesInGroup.sort((a, b) => {
-                                          // Сынып нөмірі бойынша сұрыптау
-                                          const numA = parseInt(a.match(/\d+/)?.[0] || "0");
-                                          const numB = parseInt(b.match(/\d+/)?.[0] || "0");
-                                          if (numA !== numB) return numA - numB;
-                                          return a.localeCompare(b);
-                                        }).map(grade => (
-                                          <React.Fragment key={`head_${grade}`}>
-                                            <TableHead className="border border-gray-300">Пән</TableHead>
-                                            <TableHead className="w-[60px] border border-gray-300 text-center">Каб.</TableHead>
-                                          </React.Fragment>
-                                        ))}
-                                      </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                      {/* Барлық уақыт мәндерін табу */}
-                                      {[...new Set(lessonsForGroup.map(item => item.time))]
-                                        .sort((a, b) => {
-                                          const timeA = a.split('-')[0].trim();
-                                          const timeB = b.split('-')[0].trim();
-                                          
-                                          // Нақты уақыттарды бірінші орындарға қою
-                                          if (timeA === "8:00" || timeA === "08:00") return -1; 
+                  // Ауысымды Card ішіне орналастыру
+                  <Card key={shift} className="mb-6 shadow-md">
+                    <CardHeader className="bg-muted/30 py-3 px-4 rounded-t-lg">
+                      <CardTitle className="text-lg">{shift} ауысым</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0 pt-2 md:p-4">
+                      {/* Сынып топтары бойынша көрсету */}
+                      {Object.keys(organizedData.gradeGroups).map(groupName => {
+                        const gradesInGroup = organizedData.gradeGroups[groupName];
+                        const lessonsForGroup = lessonsInShift.filter(item => gradesInGroup.includes(item.grade));
+                        
+                        if (lessonsForGroup.length === 0) return null;
+                        
+                        return (
+                          <div key={groupName} className="mb-4 last:mb-0">
+                            {/* Топ тақырыбын алып тастаймыз */}
+                            
+                            {/* Кесте */}
+                            {/* Card-ты алып тастаймыз, себебі ауысым деңгейінде Card бар */}
+                            {groupName === "Орыс сыныптары" || groupName === "Лицей сыныптары" ? (
+                              <div className="overflow-x-auto">
+                                <Table className="border-collapse border border-gray-300 w-full">
+                                  <TableHeader>
+                                    <TableRow className="bg-muted/30">
+                                      <TableHead rowSpan={2} className="w-[30px] border border-gray-300 text-center">№</TableHead>
+                                      <TableHead rowSpan={2} className="w-[80px] border border-gray-300">Уақыт</TableHead>
+                                      {gradesInGroup.sort((a, b) => {
+                                        // Сынып нөмірі бойынша сұрыптау
+                                        const numA = parseInt(a.match(/\d+/)?.[0] || "0");
+                                        const numB = parseInt(b.match(/\d+/)?.[0] || "0");
+                                        if (numA !== numB) return numA - numB;
+                                        return a.localeCompare(b);
+                                      }).map(grade => (
+                                        <TableHead 
+                                          key={grade}
+                                          colSpan={2}
+                                          className="w-[160px] hover:bg-accent hover:text-accent-foreground transition-colors border border-gray-300 text-center"
+                                          onClick={() => {
+                                            const params = new URLSearchParams();
+                                            params.set('grade', grade);
+                                            if (day) {
+                                              params.set('day', day);
+                                            }
+                                            window.location.href = `?${params.toString()}`;
+                                          }}
+                                          style={{ cursor: 'pointer' }}
+                                        >
+                                          <Button variant="ghost" size="sm" className="p-0 m-0 h-auto font-normal">
+                                            {grade}
+                                          </Button>
+                                        </TableHead>
+                                      ))}
+                                    </TableRow>
+                                    <TableRow className="bg-muted/30">
+                                      {gradesInGroup.sort((a, b) => {
+                                        // Сынып нөмірі бойынша сұрыптау
+                                        const numA = parseInt(a.match(/\d+/)?.[0] || "0");
+                                        const numB = parseInt(b.match(/\d+/)?.[0] || "0");
+                                        if (numA !== numB) return numA - numB;
+                                        return a.localeCompare(b);
+                                      }).map(grade => (
+                                        <React.Fragment key={`head_${grade}`}>
+                                          <TableHead className="border border-gray-300">Пән</TableHead>
+                                          <TableHead className="w-[60px] border border-gray-300 text-center">Каб.</TableHead>
+                                        </React.Fragment>
+                                      ))}
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    {/* Барлық уақыт мәндерін табу */}
+                                    {[...new Set(lessonsForGroup.map(item => item.time))]
+                                      .sort((a, b) => {
+                                        const timeA = a.split('-')[0].trim();
+                                        const timeB = b.split('-')[0].trim();
+                                        
+                                        // Нақты уақыттарды бірінші орындарға қою
+                                        if (timeA === "8:00" || timeA === "08:00") return -1; 
+                                        if (timeB === "8:00" || timeB === "08:00") return 1;
+                                        
+                                        if (timeA === "8:50" || timeA === "08:50") {
                                           if (timeB === "8:00" || timeB === "08:00") return 1;
-                                          
-                                          if (timeA === "8:50" || timeA === "08:50") {
-                                            if (timeB === "8:00" || timeB === "08:00") return 1;
-                                            return -1;
-                                          }
-                                          if (timeB === "8:50" || timeB === "08:50") {
-                                            if (timeA === "8:00" || timeA === "08:00") return -1;
-                                            return 1;
-                                          }
-                                          
-                                          const hourA = parseInt(timeA.split(':')[0] || "0");
-                                          const hourB = parseInt(timeB.split(':')[0] || "0");
-                                          if (hourA !== hourB) return hourA - hourB;
-                                          
-                                          const minuteA = parseInt(timeA.split(':')[1] || "0");
-                                          const minuteB = parseInt(timeB.split(':')[1] || "0");
-                                          return minuteA - minuteB;
-                                        })
-                                        .map(time => (
-                                          <TableRow key={time} className="hover:bg-muted/20">
-                                            <TableCell className="text-center font-bold border border-gray-300">{lessonsForGroup.find(l => l.time === time)?.lessonNumber || '-'}</TableCell>
-                                            <TableCell className="text-xs border border-gray-300">{time}</TableCell>
-                                            {gradesInGroup.sort((a, b) => {
-                                              // Сынып нөмірі бойынша сұрыптау
-                                              const numA = parseInt(a.match(/\d+/)?.[0] || "0");
-                                              const numB = parseInt(b.match(/\d+/)?.[0] || "0");
-                                              if (numA !== numB) return numA - numB;
-                                              return a.localeCompare(b);
-                                            }).map(grade => {
-                                              const lesson = lessonsForGroup.find(
-                                                item => item.time === time && item.grade === grade
-                                              );
-                                              
-                                              return (
-                                                <React.Fragment key={`${grade}_${time}`}>
-                                                  <TableCell className={`text-xs border border-gray-300 ${lesson ? 'font-medium' : 'text-muted-foreground'}`}>
-                                                    {lesson?.subject || "-"}
-                                                  </TableCell>
-                                                  <TableCell className="text-xs text-center border border-gray-300">{lesson?.room || "-"}</TableCell>
-                                                </React.Fragment>
-                                              );
-                                            })}
-                                          </TableRow>
-                                        ))}
-                                    </TableBody>
-                                  </Table>
-                                </div>
-                              ) : (
-                                /* Басқа топтар үшін бұрынғы көрініс */
-                                <>
-                                  {organizedData.uniqueGradeNumbers
-                                    .filter(gradeNum => {
-                                      // Тек осы топтағы сынып нөмірлерін алу
-                                      return gradesInGroup.some(grade => grade.startsWith(gradeNum));
-                                    })
-                                    .map(gradeNum => {
-                                      // Осы нөмірлі барлық сыныптар (тек осы топтан)
-                                      const gradesWithNum = gradesInGroup.filter(g => g.startsWith(gradeNum));
-                                      
-                                      // Осы сыныптар үшін сабақтар
-                                      const lessonsForGradeNum = lessonsForGroup.filter(item => gradesWithNum.includes(item.grade));
-                                      
-                                      if (lessonsForGradeNum.length === 0) return null;
-                                      
-                                      // Барлық уақыт мәндерін табу
-                                      const uniqueTimes = [...new Set(lessonsForGradeNum.map(item => item.time))]
-                                        .sort((a, b) => {
-                                          const timeA = a.split('-')[0].trim();
-                                          const timeB = b.split('-')[0].trim();
-                                          
-                                          // Нақты уақыттарды бірінші орындарға қою
-                                          if (timeA === "8:00" || timeA === "08:00") return -1; // 8:00 әрқашан бірінші
+                                          return -1;
+                                        }
+                                        if (timeB === "8:50" || timeB === "08:50") {
+                                          if (timeA === "8:00" || timeA === "08:00") return -1;
+                                          return 1;
+                                        }
+                                        
+                                        const hourA = parseInt(timeA.split(':')[0] || "0");
+                                        const hourB = parseInt(timeB.split(':')[0] || "0");
+                                        if (hourA !== hourB) return hourA - hourB;
+                                        
+                                        const minuteA = parseInt(timeA.split(':')[1] || "0");
+                                        const minuteB = parseInt(timeB.split(':')[1] || "0");
+                                        return minuteA - minuteB;
+                                      })
+                                      .map(time => (
+                                        <TableRow key={time} className="hover:bg-muted/20">
+                                          <TableCell className="text-center font-bold border border-gray-300">{lessonsForGroup.find(l => l.time === time)?.lessonNumber || '-'}</TableCell>
+                                          <TableCell className="text-xs border border-gray-300">{time}</TableCell>
+                                          {gradesInGroup.sort((a, b) => {
+                                            // Сынып нөмірі бойынша сұрыптау
+                                            const numA = parseInt(a.match(/\d+/)?.[0] || "0");
+                                            const numB = parseInt(b.match(/\d+/)?.[0] || "0");
+                                            if (numA !== numB) return numA - numB;
+                                            return a.localeCompare(b);
+                                          }).map(grade => {
+                                            const lesson = lessonsForGroup.find(
+                                              item => item.time === time && item.grade === grade
+                                            );
+                                            
+                                            return (
+                                              <React.Fragment key={`${grade}_${time}`}>
+                                                <TableCell className={`text-xs border border-gray-300 ${lesson ? 'font-medium' : 'text-muted-foreground'}`}>
+                                                  {lesson?.subject || "-"}
+                                                </TableCell>
+                                                <TableCell className="text-xs text-center border border-gray-300">{lesson?.room || "-"}</TableCell>
+                                              </React.Fragment>
+                                            );
+                                          })}
+                                        </TableRow>
+                                      ))}
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            ) : (
+                              <>
+                                {organizedData.uniqueGradeNumbers
+                                  .filter(gradeNum => {
+                                    // Тек осы топтағы сынып нөмірлерін алу
+                                    return gradesInGroup.some(grade => grade.startsWith(gradeNum));
+                                  })
+                                  .map(gradeNum => {
+                                    // Осы нөмірлі барлық сыныптар (тек осы топтан)
+                                    const gradesWithNum = gradesInGroup.filter(g => g.startsWith(gradeNum));
+                                    
+                                    // Осы сыныптар үшін сабақтар
+                                    const lessonsForGradeNum = lessonsForGroup.filter(item => gradesWithNum.includes(item.grade));
+                                    
+                                    if (lessonsForGradeNum.length === 0) return null;
+                                    
+                                    // Барлық уақыт мәндерін табу
+                                    const uniqueTimes = [...new Set(lessonsForGradeNum.map(item => item.time))]
+                                      .sort((a, b) => {
+                                        const timeA = a.split('-')[0].trim();
+                                        const timeB = b.split('-')[0].trim();
+                                        
+                                        // Нақты уақыттарды бірінші орындарға қою
+                                        if (timeA === "8:00" || timeA === "08:00") return -1; // 8:00 әрқашан бірінші
+                                        if (timeB === "8:00" || timeB === "08:00") return 1;
+                                        
+                                        if (timeA === "8:50" || timeA === "08:50") {
                                           if (timeB === "8:00" || timeB === "08:00") return 1;
-                                          
-                                          if (timeA === "8:50" || timeA === "08:50") {
-                                            if (timeB === "8:00" || timeB === "08:00") return 1;
-                                            return -1; // 8:50 әрқашан екінші орында
-                                          }
-                                          if (timeB === "8:50" || timeB === "08:50") {
-                                            if (timeA === "8:00" || timeA === "08:00") return -1;
-                                            return 1;
-                                          }
-                                          
-                                          const hourA = parseInt(timeA.split(':')[0] || "0");
-                                          const hourB = parseInt(timeB.split(':')[0] || "0");
-                                          if (hourA !== hourB) return hourA - hourB;
-                                          
-                                          const minuteA = parseInt(timeA.split(':')[1] || "0");
-                                          const minuteB = parseInt(timeB.split(':')[1] || "0");
-                                          return minuteA - minuteB;
-                                        });
-                                      
-                                      return (
-                                        <div key={`${groupName}_${gradeNum}`} className="mb-6">
-                                          {/* Сынып тақырыбын алып тастаймыз */}
-                                          <div className="overflow-x-auto">
-                                            <Table className="border-collapse border border-gray-300">
-                                              <TableHeader>
-                                                <TableRow className="bg-muted/30">
-                                                  <TableHead rowSpan={2} className="w-[30px] border border-gray-300 text-center">№</TableHead>
-                                                  <TableHead rowSpan={2} className="w-[80px] border border-gray-300">Уақыт</TableHead>
-                                                  {gradesWithNum.map(grade => (
-                                                    <TableHead 
-                                                      key={grade}
-                                                      colSpan={2}
-                                                      className="w-[160px] hover:bg-accent hover:text-accent-foreground transition-colors border border-gray-300 text-center"
-                                                      onClick={() => window.location.href = `?grade=${grade}&day=${day}`}
-                                                      style={{ cursor: 'pointer' }}
-                                                    >
-                                                      <Button variant="ghost" size="sm" className="p-0 m-0 h-auto font-normal">
-                                                        {grade}
-                                                      </Button>
-                                                    </TableHead>
-                                                  ))}
-                                                </TableRow>
-                                                <TableRow className="bg-muted/30">
-                                                  {gradesWithNum.map(grade => (
-                                                    <React.Fragment key={`head_${grade}`}>
-                                                      <TableHead className="border border-gray-300">Пән</TableHead>
-                                                      <TableHead className="w-[60px] border border-gray-300 text-center">Каб.</TableHead>
-                                                    </React.Fragment>
-                                                  ))}
-                                                </TableRow>
-                                              </TableHeader>
-                                              <TableBody>
-                                                {uniqueTimes.map(time => (
-                                                  <TableRow key={time} className="hover:bg-muted/20">
-                                                    <TableCell className="text-center font-bold border border-gray-300">{lessonsForGradeNum.find(l => l.time === time)?.lessonNumber || '-'}</TableCell>
-                                                    <TableCell className="text-xs border border-gray-300">{time}</TableCell>
-                                                    {gradesWithNum.map(grade => {
-                                                      const lesson = lessonsForGradeNum.find(
-                                                        item => item.time === time && item.grade === grade
-                                                      );
-                                                      
-                                                      return (
-                                                        <React.Fragment key={`${grade}_${time}`}>
-                                                          <TableCell className={`text-xs border border-gray-300 ${lesson ? 'font-medium' : 'text-muted-foreground'}`}>
-                                                            {lesson?.subject || "-"}
-                                                          </TableCell>
-                                                          <TableCell className="text-xs text-center border border-gray-300">{lesson?.room || "-"}</TableCell>
-                                                        </React.Fragment>
-                                                      );
-                                                    })}
-                                                  </TableRow>
+                                          return -1; // 8:50 әрқашан екінші орында
+                                        }
+                                        if (timeB === "8:50" || timeB === "08:50") {
+                                          if (timeA === "8:00" || timeA === "08:00") return -1;
+                                          return 1;
+                                        }
+                                        
+                                        const hourA = parseInt(timeA.split(':')[0] || "0");
+                                        const hourB = parseInt(timeB.split(':')[0] || "0");
+                                        if (hourA !== hourB) return hourA - hourB;
+                                        
+                                        const minuteA = parseInt(timeA.split(':')[1] || "0");
+                                        const minuteB = parseInt(timeB.split(':')[1] || "0");
+                                        return minuteA - minuteB;
+                                      });
+                                    
+                                    return (
+                                      <div key={`${groupName}_${gradeNum}`} className="mb-6 last:mb-0">
+                                        <div className="overflow-x-auto">
+                                          <Table className="border-collapse border border-gray-300">
+                                            <TableHeader>
+                                              <TableRow className="bg-muted/30">
+                                                <TableHead rowSpan={2} className="w-[30px] border border-gray-300 text-center">№</TableHead>
+                                                <TableHead rowSpan={2} className="w-[80px] border border-gray-300">Уақыт</TableHead>
+                                                {gradesWithNum.map(grade => (
+                                                  <TableHead 
+                                                    key={grade}
+                                                    colSpan={2}
+                                                    className="w-[160px] hover:bg-accent hover:text-accent-foreground transition-colors border border-gray-300 text-center"
+                                                    onClick={() => {
+                                                      const params = new URLSearchParams();
+                                                      params.set('grade', grade);
+                                                      if (day) {
+                                                        params.set('day', day);
+                                                      }
+                                                      window.location.href = `?${params.toString()}`;
+                                                    }}
+                                                    style={{ cursor: 'pointer' }}
+                                                  >
+                                                    <Button variant="ghost" size="sm" className="p-0 m-0 h-auto font-normal">
+                                                      {grade}
+                                                    </Button>
+                                                  </TableHead>
                                                 ))}
-                                              </TableBody>
-                                            </Table>
-                                          </div>
+                                              </TableRow>
+                                              <TableRow className="bg-muted/30">
+                                                {gradesWithNum.map(grade => (
+                                                  <React.Fragment key={`head_${grade}`}>
+                                                    <TableHead className="border border-gray-300">Пән</TableHead>
+                                                    <TableHead className="w-[60px] border border-gray-300 text-center">Каб.</TableHead>
+                                                  </React.Fragment>
+                                                ))}
+                                              </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                              {uniqueTimes.map(time => (
+                                                <TableRow key={time} className="hover:bg-muted/20">
+                                                  <TableCell className="text-center font-bold border border-gray-300">{lessonsForGradeNum.find(l => l.time === time)?.lessonNumber || '-'}</TableCell>
+                                                  <TableCell className="text-xs border border-gray-300">{time}</TableCell>
+                                                  {gradesWithNum.map(grade => {
+                                                    const lesson = lessonsForGradeNum.find(
+                                                      item => item.time === time && item.grade === grade
+                                                    );
+                                                    
+                                                    return (
+                                                      <React.Fragment key={`${grade}_${time}`}>
+                                                        <TableCell className={`text-xs border border-gray-300 ${lesson ? 'font-medium' : 'text-muted-foreground'}`}>
+                                                          {lesson?.subject || "-"}
+                                                        </TableCell>
+                                                        <TableCell className="text-xs text-center border border-gray-300">{lesson?.room || "-"}</TableCell>
+                                                      </React.Fragment>
+                                                    );
+                                                  })}
+                                                </TableRow>
+                                              ))}
+                                            </TableBody>
+                                          </Table>
                                         </div>
-                                      );
-                                    })}
-                                </>
-                              )}
-                            </CardContent>
-                          </Card>
-                        </div>
-                      );
-                    })}
-                  </div>
+                                      </div>
+                                    );
+                                  })}
+                              </>                                
+                            )}
+                          </div>
+                        );
+                      })}
+                    </CardContent>
+                  </Card>
                 );
               })}
             </div>

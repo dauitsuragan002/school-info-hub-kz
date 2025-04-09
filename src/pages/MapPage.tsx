@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowLeft, MapPin } from "lucide-react";
@@ -10,12 +9,12 @@ const MapPage = () => {
         <Button variant="outline" asChild className="mb-4">
           <Link to="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Артқа қайту
+            Басты бетке оралу
           </Link>
         </Button>
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <MapPin className="h-8 w-8" />
-          Мектеп Картасы
+          Мектеп картасы
         </h1>
       </div>
 
