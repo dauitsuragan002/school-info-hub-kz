@@ -99,6 +99,22 @@ export const SchoolFilters = ({
     return gradeFilter === `group_${groupName}`;
   };
 
+  const dayButtons = [
+    { value: "дүйсенбі", label: "ДС" },
+    { value: "сейсенбі", label: "СС" },
+    { value: "сәрсенбі", label: "СР" },
+    { value: "бейсенбі", label: "БС" },
+    { value: "жұма", label: "ЖМ" }
+  ];
+
+  const handleDayFilter = (day: string) => {
+    if (day === "all") {
+      setDayFilter("all");
+    } else {
+      setDayFilter(day);
+    }
+  };
+
   return (
     <div className="bg-muted/20 rounded-lg p-3 mb-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -190,16 +206,15 @@ export const SchoolFilters = ({
         {/* Күндер */}
         <div>
           <h3 className="text-sm font-semibold mb-2">Күндер</h3>
-          <div className="flex flex-wrap gap-1">
-            {daysList.map((day) => (
+          <div className="flex gap-1 flex-wrap">
+            {dayButtons.map((day) => (
               <Button
-                key={day}
-                size="sm"
+                key={day.value}
+                variant={dayFilter === day.value ? "default" : "outline"}
                 className="h-7 text-xs px-2 py-0"
-                variant={dayFilter.toLowerCase() === day.toLowerCase() ? "default" : "outline"}
-                onClick={() => setDayFilter(dayFilter.toLowerCase() === day.toLowerCase() ? "all" : day)}
+                onClick={() => handleDayFilter(day.value)}
               >
-                {day.charAt(0).toUpperCase()}
+                {day.label}
               </Button>
             ))}
           </div>

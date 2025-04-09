@@ -11,6 +11,14 @@ interface ScheduleTableProps {
   gradeFilter?: string; // Сынып фильтрі (қосымша)
 }
 
+const dayButtons = [
+  { value: "дүйсенбі", label: "ДС" },
+  { value: "сейсенбі", label: "СС" },
+  { value: "сәрсенбі", label: "СР" },
+  { value: "бейсенбі", label: "БС" },
+  { value: "жұма", label: "Ж" }
+];
+
 export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "all", gradeFilter = "all" }: ScheduleTableProps) => {
   console.log("ScheduleTable компоненті басталды, фильтрлер:", { shiftFilter, dayFilter, dataLength: scheduleData.length });
 
@@ -543,18 +551,14 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
                       return (
                         <div key={groupName} className="mb-4">
                           {/* Топ тақырыбын тек ол таңдалмаған кезде көрсетеміз */}
-                          {(gradeFilter !== `group_${groupName}` && !gradesInGroup.includes(gradeFilter)) && (
-                            <h4 className="text-base font-semibold mb-2 bg-muted/30 p-2 rounded">{groupName}</h4>
-                          )}
+                          {/* Топ тақырыбын алып тастаймыз, себебі бейджде көрсетілген */}
                           
                           {/* Кесте */}
-                          <Card className="mb-4">
-                            {/* Карточканың тақырыбын жоямыз, бәрібір сабақ кестесі екені белгілі */}
-                            <CardContent className="py-3">
+                          <Card className="mb-4 shadow-sm hover:shadow-md transition-shadow">
+                            <CardContent className="p-3">
                               {groupName === "Орыс сыныптары" || groupName === "Лицей сыныптары" ? (
                                 <div className="overflow-x-auto">
-                                  {/* Орыс және Лицей сыныптары үшін арнайы көрініс - бәрі бір кестеде */}
-                                  <Table className="border-collapse border border-gray-300">
+                                  <Table className="border-collapse border border-gray-300 w-full">
                                     <TableHeader>
                                       <TableRow className="bg-muted/30">
                                         <TableHead rowSpan={2} className="w-[30px] border border-gray-300 text-center">№</TableHead>
@@ -698,7 +702,7 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
                                       
                                       return (
                                         <div key={`${groupName}_${gradeNum}`} className="mb-6">
-                                          <h5 className="text-sm font-semibold my-2 p-1 bg-muted/20 rounded">{gradeNum}-сынып</h5>
+                                          {/* Сынып тақырыбын алып тастаймыз */}
                                           <div className="overflow-x-auto">
                                             <Table className="border-collapse border border-gray-300">
                                               <TableHeader>
@@ -772,6 +776,24 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
     );
   }
   
+  // Күн аттарын қысқарту функциясы
+  const getShortDayName = (fullDay: string): string => {
+    const dayMap: Record<string, string> = {
+      'дүйсенбі': 'ДС',
+      'сейсенбі': 'СС',
+      'сәрсенбі': 'СР',
+      'бейсенбі': 'БС',
+      'жұма': 'ЖМ',
+      // Орыс тіліндегі күндер үшін де қысқартулар
+      'понедельник': 'ДС',
+      'вторник': 'СС',
+      'среда': 'СР',
+      'четверг': 'БС',
+      'пятница': 'ЖМ'
+    };
+    return dayMap[fullDay.toLowerCase()] || fullDay;
+  };
+
   // Әдепкі көрініс (жалпы кесте)
   return (
     <div className="text-sm">
@@ -793,7 +815,7 @@ export const ScheduleTable = ({ scheduleData, shiftFilter = "all", dayFilter = "
         <TableBody>
           {filteredByShift.map((item) => (
             <TableRow key={item.id} className="hover:bg-muted/20">
-              <TableCell className="border border-gray-300">{item.day}</TableCell>
+              <TableCell className="border border-gray-300">{getShortDayName(item.day)}</TableCell>
               <TableCell className="text-center font-bold border border-gray-300">{getLessonNumber(item.time, item.shift)}</TableCell>
               <TableCell className="border border-gray-300">{item.time}</TableCell>
               <TableCell className="border border-gray-300">{item.grade}</TableCell>

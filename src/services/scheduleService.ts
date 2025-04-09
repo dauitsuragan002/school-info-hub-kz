@@ -91,6 +91,62 @@ function saveActiveScheduleData(data: ScheduleItem[]): void {
   }
 }
 
+// Уақыт форматын тексеру және түзету
+function normalizeTime(time: string): string {
+  // Уақытты стандартты форматқа келтіру
+  time = time.trim();
+  
+  // Егер тек сан болса (мысалы "8" немесе "14")
+  if (/^\d+$/.test(time)) {
+    const hour = parseInt(time);
+    return `${hour.toString().padStart(2, '0')}:00-${(hour+1).toString().padStart(2, '0')}:00`;
+  }
+  
+  // Егер "8.00" форматында болса
+  if (/^\d+\.\d+$/.test(time)) {
+    time = time.replace('.', ':');
+  }
+  
+  // Егер тек бастапқы уақыт болса (мысалы "8:00")
+  if (/^\d{1,2}:\d{2}$/.test(time)) {
+    const [hour, minute] = time.split(':');
+    const nextHour = (parseInt(hour) + 1).toString().padStart(2, '0');
+    return `${hour.padStart(2, '0')}:${minute}-${nextHour}:${minute}`;
+  }
+  
+  return time;
+}
+
+// Ауысымды анықтау функциясы
+function determineShift(time: string, sheetName: string): string {
+  // Парақ атауы бойынша тексеру
+  const sheetNameLower = sheetName.toLowerCase();
+  if (sheetNameLower.includes('ii') || 
+      sheetNameLower.includes('2') || 
+      sheetNameLower.includes('екінші') || 
+      sheetNameLower.includes('второй') ||
+      sheetNameLower.includes('ауысым 2') ||
+      sheetNameLower.includes('2 ауысым')) {
+    return "II";
+  }
+  
+  // Уақыт бойынша тексеру
+  const timeMatch = time.match(/^(\d{1,2}):/);
+  if (timeMatch) {
+    const hour = parseInt(timeMatch[1]);
+    // 14:00 және одан кейінгі уақыттар - 2-ші ауысым
+    if (hour >= 14) {
+      return "II";
+    }
+    // 8:00-ден 13:59-ға дейін - 1-ші ауысым
+    if (hour >= 8 && hour < 14) {
+      return "I";
+    }
+  }
+  
+  return "I"; // Әдепкі мән
+}
+
 // Мектеп сабақ кестесі xlsx файлын өңдеу (арнайы формат)
 function processSchoolScheduleFile(workbook: XLSX.WorkBook): ScheduleItem[] {
   try {
@@ -99,69 +155,17 @@ function processSchoolScheduleFile(workbook: XLSX.WorkBook): ScheduleItem[] {
     
     console.log(`Excel файлында ${workbook.SheetNames.length} парақ бар:`, workbook.SheetNames);
     
-    // Әр парақты өңдеу (әр ауысым үшін бөлек парақ)
-    workbook.SheetNames.forEach((sheetName, sheetIndex) => {
-      // Парақ атауы бойынша ауысымды анықтау
-      let shift = "I"; // Әдепкі мән
-      
-      const sheetNameLower = sheetName.toLowerCase();
-      console.log(`Парақ атауы: "${sheetName}", төмен регистрде: "${sheetNameLower}"`);
-      
-      // Парақтың атауы бойынша екінші ауысымды анықтау
-      if (sheetNameLower.includes('ii') || 
-          sheetNameLower.includes('2') || 
-          sheetNameLower.includes('екінші') || 
-          sheetNameLower.includes('второй') ||
-          sheetNameLower.includes('ауысым 2') ||
-          sheetNameLower.includes('ii ауысым') ||
-          sheetNameLower.includes('ii смена') ||
-          sheetNameLower.includes('2 смена') ||
-          sheetNameLower.includes('2 ауысым') ||
-          // Қосымша тексеру шаблондары
-          /ii/.test(sheetNameLower) ||
-          /2$/.test(sheetNameLower) ||
-          /2 /.test(sheetNameLower) ||
-          /смена 2/.test(sheetNameLower) ||
-          /смена.*2/.test(sheetNameLower) ||
-          /ауысым.*2/.test(sheetNameLower)) {
-        shift = "II";
-        console.log(`II ауысым парағы табылды: ${sheetName}`);
-      } else {
-        shift = "I";
-        console.log(`I ауысым парағы табылды: ${sheetName}`);
-      }
-      
-      console.log(`Парақ: ${sheetName}, ауысым: ${shift}`);
-      
+    workbook.SheetNames.forEach((sheetName) => {
       const worksheet = workbook.Sheets[sheetName];
-      
-      // Парақ туралы мәліметтер
-      console.log(`Парақ объектісі:`, Object.keys(worksheet));
-      console.log(`Парақ аумағы:`, worksheet['!ref']);
-      
-      // Парақты массив түрінде алу (толық опциялармен)
       const data = XLSX.utils.sheet_to_json(worksheet, { 
         header: 1,
         defval: '',
-        blankrows: false,
-        rawNumbers: false,
-        raw: false
+        blankrows: false
       }) as any[][];
       
-      console.log(`"${sheetName}" парағында ${data.length} жол бар`);
+      let currentDay = "";
       
-      // Бірнеше жолдарды лог етіп, деректер құрылымын тексеру
-      for (let i = 0; i < Math.min(10, data.length); i++) {
-        console.log(`Жол ${i}:`, JSON.stringify(data[i]));
-      }
-      
-      // Егер деректер жоқ болса, өткізіп жіберу
-      if (!data || data.length < 5) {
-        console.log(`${sheetName} парағында жеткілікті деректер жоқ (${data ? data.length : 0} жол табылды)`);
-        return;
-      }
-      
-      // Сыныптар жолын іздеу (әдетте 4-ші жол)
+      // Сыныптар жолын табу
       const classesRowIndex = findClassesRowIndex(data);
       if (classesRowIndex === -1) {
         console.log(`${sheetName} парағында сыныптар жолы табылмады`);
@@ -170,199 +174,56 @@ function processSchoolScheduleFile(workbook: XLSX.WorkBook): ScheduleItem[] {
       
       // Сыныптарды алу
       const classes = extractClasses(data[classesRowIndex]);
-      console.log(`Табылған сыныптар:`, classes.map(c => c.grade).join(", "));
       
-      // Күнді сақтау
-      let currentDay = "";
-      
-      // Деректерді қолмен өңдеу
-      const scheduleItems: ScheduleItem[] = [];
-      let itemId = 1;
-      
-      // Арнайы парақ II ауысым болғандықтан, ауысым анықтамасы
-      const shiftType = "II"; // Бұл екінші ауысым парағы
-      
-      // Сабақ кестесін өңдеу
+      // Деректерді өңдеу
       for (let rowIndex = classesRowIndex + 1; rowIndex < data.length; rowIndex++) {
         const row = data[rowIndex];
         
-        // Жол бос болса, өткізіп жіберу
-        if (!row || row.length < 2) {
+        if (!row || row.length < 2) continue;
+        
+        // Күнді тексеру
+        if (row[0] && isWeekDay(String(row[0]).trim())) {
+          currentDay = String(row[0]).trim();
           continue;
         }
         
-        // Күн бағанын тексеру (бірінші баған)
-        if (row[0] && row[0] !== "" && row[0] !== null) {
-          let possibleDay = "";
-          
-          // Excel ұяшығының типтері бойынша түрлендіру
-          if (typeof row[0] === 'object' && row[0].w) {
-            possibleDay = String(row[0].w).trim();
-          } else {
-            possibleDay = String(row[0]).trim();
-          }
-          
-          // Егер бұл күн болса (апта күндерінің бірі)
-          if (isWeekDay(possibleDay)) {
-            currentDay = possibleDay;
-            console.log(`Күн анықталды: ${currentDay}`);
-            continue; // Бұл жолда тек күн атауы, сабақ жоқ
-          }
-        }
+        if (!currentDay) continue;
         
-        // Егер күн белгіленбеген болса жолды өткізіп жіберу
-        if (!currentDay) {
-          continue;
-        }
+        // Уақытты алу және нормализациялау
+        let time = row[1] ? String(row[1]).trim() : "";
+        if (!time) continue;
         
-        // Уақыт бағанын тексеру (екінші баған)
-        let time = "";
-        if (row[1]) {
-          // Excel ұяшығының типтері бойынша түрлендіру
-          if (typeof row[1] === 'object' && row[1].w) {
-            time = String(row[1].w).trim();
-          } else {
-            time = String(row[1]).trim();
-          }
-        }
+        time = normalizeTime(time);
         
-        // Уақыт форматын тексеру және түзету
-        if (time && !time.includes(':') && !time.includes('-')) {
-          // Егер бұл тек сан болса (мысалы, "8"), оны сағат форматына айналдыру
-          if (!isNaN(Number(time))) {
-            time = `${time}:00-${Number(time)+1}:00`;
-          }
-        }
-        
-        if (!time || time === "") {
-          continue; // Уақыт жоқ болса, өткізіп жіберу
-        }
-        
-        // 8:00-8:45 уақытын арнайы тексеру - II ауысым парағында болуы мүмкін
-        if (time && (time.startsWith("8:50") || time.startsWith("08:50"))) {
-          // Сыныптар бойынша жүру
-          for (const classInfo of classes) {
-            const columnIndex = classInfo.columnIndex;
-            const grade = classInfo.grade;
-            
-            // Баған индексі бар екенін тексеру
-            if (columnIndex === undefined || columnIndex >= row.length) {
-              continue;
-            }
-            
-            // Бұл жолдың алдында 8:00-8:45 уақыты болуы керек - оны тексереміз
-            const prev8amLesson = scheduleItems.find(item => 
-              item.day === currentDay && 
-              item.shift === shiftType && 
-              item.grade === grade && 
-              (item.time.startsWith("8:00") || item.time.startsWith("08:00"))
-            );
-            
-            // Пән ұяшығының мәнін алу
-            let subject = "";
-            if (row[columnIndex]) {
-              if (typeof row[columnIndex] === 'object' && row[columnIndex].w) {
-                subject = String(row[columnIndex].w).trim();
-              } else {
-                subject = String(row[columnIndex]).trim();
-              }
-            }
-            
-            // Егер пән бос болса, өткізіп жіберу
-            if (!subject || subject.trim() === "" || subject.toLowerCase() === "каб") {
-              continue;
-            }
-            
-            // Егер сол күнге 8:00 уақытында сабақ жоқ болса 
-            if (!prev8amLesson) {
-              console.log(`${currentDay} күні ${grade} сыныбына 8:00 сабағы жоқ, бірінші сабақты қосамын...`);
-              
-              // Бірінші сабақ үшін "-" деген пән
-              scheduleItems.push({
-                id: itemId++,
-                day: currentDay,
-                time: "8:00-8:45",
-                grade: grade,
-                subject: "-", // Бос сабақ ретінде белгілеу (екінші сабақтың пәнін қоспау)
-                room: "-",    // Бос кабинет
-                shift: shiftType
-              });
-              
-              console.log(`8:00-8:45 сабағы қосылды: ${grade}, "-", "-"`);
-            }
-          }
-        }
-        
-        // Сыныптар бойынша жүру
+        // Әр сынып үшін
         for (const classInfo of classes) {
           const columnIndex = classInfo.columnIndex;
           const grade = classInfo.grade;
           
-          // Баған индексі бар екенін тексеру
-          if (columnIndex === undefined || columnIndex >= row.length) {
-            continue;
-          }
+          if (columnIndex === undefined || columnIndex >= row.length) continue;
           
-          // Пән ұяшығының мәнін алу
-          let subject = "";
-          if (row[columnIndex]) {
-            if (typeof row[columnIndex] === 'object' && row[columnIndex].w) {
-              subject = String(row[columnIndex].w).trim();
-            } else {
-              subject = String(row[columnIndex]).trim();
-            }
-          }
+          // Пәнді алу
+          let subject = row[columnIndex] ? String(row[columnIndex]).trim() : "";
+          if (!subject || subject.toLowerCase() === "каб") continue;
           
-          // Кабинет ұяшығының мәнін алу (келесі баған)
+          // Кабинетті алу
           let room = "";
-          if (columnIndex + 1 < row.length && row[columnIndex + 1]) {
-            if (typeof row[columnIndex + 1] === 'object' && row[columnIndex + 1].w) {
-              room = String(row[columnIndex + 1].w).trim();
-            } else {
-              room = String(row[columnIndex + 1]).trim();
-            }
+          if (columnIndex + 1 < row.length) {
+            room = row[columnIndex + 1] ? String(row[columnIndex + 1]).trim() : "";
           }
           
-          // Егер пән бос болса немесе "каб" болса (бұл кабинет бағаны), өткізіп жіберу
-          if (!subject || subject === "" || subject.toLowerCase() === "каб") {
-            continue;
-          }
+          // Ауысымды анықтау
+          const shift = determineShift(time, sheetName);
           
-          // "Сынып сағаты", "класс.час" сияқты пәндер болуы мүмкін
-          if (subject.toLowerCase().includes('сынып сағаты') || 
-              subject.toLowerCase().includes('класс') || 
-              subject.toLowerCase().includes('class') || 
-              subject.toLowerCase().includes('час') || 
-              subject.toLowerCase() === 'сс' || 
-              subject.toLowerCase() === 'кл.ч' || 
-              subject.toLowerCase().includes('сын.сағ')) {
-            subject = "Сынып сағаты";
-            
-            // Арнайы журнал күндері үшін
-            if (subject.toLowerCase().includes('журнал') ||
-                subject.toLowerCase().includes('инструктаж') ||
-                subject.toLowerCase().includes('техника безопасности') ||
-                subject.toLowerCase().includes('тб') ||
-                subject.toLowerCase().includes('қауіпсіздік') ||
-                subject.toLowerCase().includes('жиналыс')) {
-              subject = subject; // Өзгертпей қалдыру
-            }
-          }
-          
-          // Тексерілген мәліметті консольге шығару (өңдеу барысында)
-          if (subject === "Сынып сағаты") {
-            console.log(`Сынып сағаты табылды: ${grade}, ${currentDay} күні, ${time} уақытында`);
-          }
-          
-          // Сабақ жазбасын қосу
+          // Сабақты қосу
           scheduleItems.push({
             id: itemId++,
             day: currentDay,
             time: time,
             grade: grade,
             subject: subject,
-            room: room,
-            shift: shiftType // Бұл екінші ауысым парағы
+            room: room || "-",
+            shift: shift
           });
         }
       }
@@ -375,9 +236,8 @@ function processSchoolScheduleFile(workbook: XLSX.WorkBook): ScheduleItem[] {
     
     return scheduleItems;
   } catch (error) {
-    console.error('Мектеп сабақ кестесін өңдеу кезінде қате орын алды:', error);
-    console.error(error);
-    return [];
+    console.error('Сабақ кестесін өңдеу кезінде қате:', error);
+    throw error;
   }
 }
 
