@@ -1,24 +1,16 @@
-# Welcome to your Lovable project
+# Welcome to School Info Hub
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/c94ac1dc-e774-4812-8e37-e99e43923231
+**URL**: https://school-info-hub-kz.vercel.app
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/c94ac1dc-e774-4812-8e37-e99e43923231) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+You can clone this repo and push changes. The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
 Follow these steps:
 
@@ -62,12 +54,8 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/c94ac1dc-e774-4812-8e37-e99e43923231) and click on Share -> Publish.
+You can deploy this project using Vercel, Netlify, or any other static site hosting service.
 
-## Can I connect a custom domain to my Lovable project?
+## Custom Domain Setup
 
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+You can connect a custom domain to your deployed project through your hosting provider's domain settings.
