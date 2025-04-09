@@ -605,7 +605,7 @@ export async function readExcelFile(file: File): Promise<ScheduleItem[]> {
               }
               
               // "Сынып сағаты", "класс.час" сияқты пәндер болуы мүмкін
-              if (subject.toLowerCase().includes('сынып сағат') || 
+              if (subject.toLowerCase().includes('сынып сағаты') || 
                   subject.toLowerCase().includes('класс') || 
                   subject.toLowerCase().includes('class') || 
                   subject.toLowerCase().includes('час') || 
