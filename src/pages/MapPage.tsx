@@ -1,20 +1,24 @@
+
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, MapPin } from "lucide-react";
 
 const MapPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="container mx-auto py-10 px-4">
       <div className="mb-8">
-        <Button variant="outline" asChild className="mb-4">
-          <Link to="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Басты бетке оралу
-          </Link>
-        </Button>
+        <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="h-8 w-8"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <MapPin className="h-8 w-8" />
-          Мектеп картасы
+          Мектеп Картасы
         </h1>
       </div>
 
